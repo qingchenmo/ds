@@ -1,0 +1,112 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="80dp">
+        <TextView
+            android:text="@string/distance"
+            android:gravity="center"
+            android:layout_width="120dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/distance"
+            android:gravity="center"
+            android:layout_width="50dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:gravity="center"
+            android:text="@string/miter"
+            android:layout_width="20dp"
+            android:layout_height="match_parent" />
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="100dp"
+                android:gravity="center"
+                android:text="@string/set_object_dis"
+                android:layout_height="match_parent" />
+            <Spinner
+                android:id="@+id/distance_spinner"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:entries="@array/distance">
+
+            </Spinner>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="500dp">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="450dp">
+            <com.serenegiant.usb.widget.UVCCameraTextureView
+                android:id="@+id/uvc_car_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:text="@string/license_text"
+                android:gravity="center"
+                android:layout_width="80dp"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/license_plate"
+                android:gravity="center"
+                android:text="@string/license_text_default"
+                android:layout_width="80dp"
+                android:layout_height="match_parent" />
+            <Button
+                android:id="@+id/add_license"
+                android:text="@string/add_license_plate"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <Button
+                android:id="@+id/remove_license"
+                android:text="@string/remove_license_plate"
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <TextView
+                android:id="@+id/text_timeout"
+                android:gravity="center"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:id="@+id/text_lan_status"
+            android:gravity="center"
+            android:text="@string/lan_status"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"/>
+        <Button
+            android:id="@+id/rise_langan"
+            android:text="@string/MINI_rise"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/fall_langan"
+            android:text="@string/MINI_fall"
+            android:layout_width="120dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

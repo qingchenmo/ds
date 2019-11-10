@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.ds"
+        minSdkVersion 22
+        targetSdkVersion 26
+        versionCode 18
+        versionName "1.0.4"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    buildToolsVersion '26.0.2'
+}
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.aar'], dir: 'libs')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+//    implementation project(':bundlelibrary-release')
+//    compile project(':adv')
+//    compile project(':libusbcamera')
+    implementation 'com.android.support:design:26.1.0'
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.lzy.net:okgo:3.0.4'
+    compile 'com.alibaba:fastjson:1.1.71.android'
+}

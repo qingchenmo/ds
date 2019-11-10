@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="设置调起摄像头距离："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/spinner_bg"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp">
+
+                        <Spinner
+                            android:id="@+id/distance_spinner"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/distance" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="设置等待停车倒计时："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/spinner_bg"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp">
+
+                        <Spinner
+                            android:id="@+id/stop_car_time_spanner"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/stop_car_time" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="已识别车牌数量：          "
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/shibie_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0次"
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="当前物体距离："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/thing_disance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="米"
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="当前有无物体："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/has_thing"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="有/无"
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地锁锁臂状态："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/ds_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="升起/降落"
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="摄像头打开状态："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/camera_status"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="打开/关闭"
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="#ffd7d7d7" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="微波："
+                    android:textColor="#25252D"
+                    android:textSize="16dp" />
+
+                <Button
+                    android:id="@+id/wb_open"
+                    android:layout_width="120dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/btn_bg"
+                    android:text="打开"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="地锁："
+                    android:textColor="#25252D"
+                    android:textSize="16dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/ds_up"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/btn_bg"
+                        android:text="上升"
+                        android:textColor="@color/black" />
+
+                    <Button
+                        android:id="@+id/ds_down"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/btn_bg"
+                        android:text="下降"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="摄像头："
+                    android:textColor="#25252D"
+                    android:textSize="16dp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/camera_open"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/btn_bg"
+                        android:text="打开"
+                        android:textColor="@color/black" />
+
+                    <Button
+                        android:id="@+id/camera_close"
+                        android:layout_width="120dp"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/btn_bg"
+                        android:text="关闭"
+                        android:textColor="@color/black" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/wb_time"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="倒计时：0秒"
+            android:textColor="#F94949"
+            android:textSize="16dp"
+            android:visibility="invisible" />
+
+        <FrameLayout
+            android:layout_width="1282px"
+            android:layout_height="722px"
+            android:layout_gravity="center">
+
+            <com.serenegiant.usb.widget.UVCCameraTextureView
+                android:id="@+id/uvc_car_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:visibility="visible" />
+        </FrameLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">地锁</string>
+    <string name="USR">栏杆操作</string>
+    <string name="USR_open">打开微波串口</string>
+    <string name="USR_close">关闭微波串口</string>
+    <string name="USR_start">开始微波测距</string>
+    <string name="MINI_open">打开栏杆串口</string>
+    <string name="MINI_close">关闭栏杆串口</string>
+    <string name="MINI_rise">上升栏杆</string>
+    <string name="MINI_fall">下降栏杆</string>
+    <string name="MINI_status">栏杆状态</string>
+
+    <string name="lan_status">栏杆状态:</string>
+    <string name="lan_up">上升状态:</string>
+    <string name="lan_down">下降状态:</string>
+    <string name="lan_moving">运动状态:</string>
+    <string name="lan_default">初始状态:</string>
+    <string name="distance">障碍物距离：</string>
+    <string name="miter">米</string>
+    <string name="license_text_default">没有识别到</string>
+    <string name="license_text">当前车牌：</string>
+    <string name="add_license_plate">添加当前车牌</string>
+    <string name="remove_license_plate">移除当前车牌</string>
+    <string name="enter_debug">进入调试模式</string>
+    <string name="no_object">没有检测到物体</string>
+    <string name="set_object_dis">设置障碍物距离：</string>
+</resources>
