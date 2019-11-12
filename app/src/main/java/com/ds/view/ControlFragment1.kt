@@ -149,6 +149,8 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
             R.id.camera_open -> {
                 mOpenCloseCamera = true
                 openCamera()
+
+//                GlobalContext.getInstance().notifyDataChanged(Constant.KEY_LICENSE_PLATE_CHECKED, "")
             }
             R.id.camera_close -> {
                 mOpenCloseCamera = false
@@ -291,29 +293,47 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
 
                 HttpsUtils.parking(license, object : HttpsUtils.HttpUtilCallBack<String> {
                     override fun onFaile(errorCode: Int, errorMsg: String) {
+                        for (i in 0 until mActivity!!.mAllowListBeans.size) {
+                            if (TextUtils.equals(license, mActivity!!.mAllowListBeans[i].chepai)) {
+                                if (mini_status == 1 && mActivity!!.mAllowListBeans[i].isAllow) {
+                                    var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
+                                    count++
+                                    mShibieCount?.text = "$count 次"
+                                    Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
+                                    downStopCarTime()
+                                    dsFall()
+                                    mActivity!!.mAllowListBeans[i].count = mActivity!!.mAllowListBeans[i].count + 1
+                                    refreShibieCount()
+                                    Toast.makeText(activity, "识别车牌 $license 成功", Toast.LENGTH_SHORT).show()
+                                }
+                                return
+                            }
+                        }
                         Toast.makeText(activity, "识别车牌 $license 失败", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onSuccess(t: String?) {
                         Toast.makeText(activity, "识别车牌 $license 成功", Toast.LENGTH_SHORT).show()
+
+                        for (i in 0 until mActivity!!.mAllowListBeans.size) {
+                            if (TextUtils.equals(license, mActivity!!.mAllowListBeans[i].chepai)) {
+                                if (mini_status == 1 && mActivity!!.mAllowListBeans[i].isAllow) {
+                                    var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
+                                    count++
+                                    mShibieCount?.text = "$count 次"
+                                    Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
+                                    downStopCarTime()
+                                    dsFall()
+                                    mActivity!!.mAllowListBeans[i].count = mActivity!!.mAllowListBeans[i].count + 1
+                                    refreShibieCount()
+                                }
+                                return
+                            }
+                        }
                     }
                 })
 
-                /*for (i in 0 until mActivity!!.mAllowListBeans.size) {
-                    if (TextUtils.equals(license, mActivity!!.mAllowListBeans[i].chepai)) {
-                        if (*//*mini_status == 1 && mActivity!!.mAllowListBeans[i].isAllow*//*true) {
-                             var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
-                             count++
-                             mShibieCount?.text = "$count 次"
-                             Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
-                             downStopCarTime()
-                             dsFall()
-                             mActivity!!.mAllowListBeans[i].count = mActivity!!.mAllowListBeans[i].count + 1
-                             refreShibieCount()
-                         }
-                         return
-                     }
-                 }*/
+
             }
             Constant.KEY_USR_DISTANCE -> {
                 val dis = o.toString().split("m".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]

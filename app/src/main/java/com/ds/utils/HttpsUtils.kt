@@ -10,12 +10,13 @@ import com.lzy.okgo.model.Response
 class HttpsUtils {
     companion object {
         private const val TAG = "HttpsUtils"
-        private const val BASE_URL = "http://192.168.0.148:8899/"
+        private const val BASE_URL = "http://27n69300u1.qicp.vip:21842/app"
 
         fun <T> parking(chepai: String, callBack: HttpUtilCallBack<T>) {
+            Log.e(TAG, "$BASE_URL/licence/parking")
             OkGo.get<String>("$BASE_URL/licence/parking")
-                    .params("dev_sn", android.os.Build.SERIAL)
-                    .params("plate_number", chepai)
+                    .params("dev_sn", android.os.Build.SERIAL/*"54203112230"*/)
+                    .params("plate_number", chepai/*"湘A888888"*/)
                     .execute(object : StringCallback() {
                         override fun onSuccess(response: Response<String>) {
                             Log.e(TAG, response.body())
