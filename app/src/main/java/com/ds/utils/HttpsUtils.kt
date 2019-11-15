@@ -10,7 +10,7 @@ import com.lzy.okgo.model.Response
 class HttpsUtils {
     companion object {
         private const val TAG = "HttpsUtils"
-        private const val BASE_URL = "http://27n69300u1.qicp.vip:21842/app"
+        private const val BASE_URL = "http://jztapi.zcym1688.com/app"
 
         fun <T> parking(chepai: String, callBack: HttpUtilCallBack<T>) {
             Log.e(TAG, "$BASE_URL/licence/parking")
@@ -30,6 +30,42 @@ class HttpsUtils {
                             super.onError(response)
                             Log.e(TAG, response?.message())
                             callBack.onFaile(0, "")
+                        }
+                    })
+        }
+
+        fun <T> update(lock_status: Int, electric_quantity: Int?, network: Int?) {
+            Log.e(TAG, "$BASE_URL/oplock/update")
+            OkGo.post<String>("$BASE_URL/oplock/update")
+                    .params("devSn", android.os.Build.SERIAL)
+                    .params("lock_status", lock_status)
+                    .execute(object : StringCallback() {
+                        override fun onSuccess(response: Response<String>) {
+                            Log.e(TAG, response.body())
+                        }
+
+                        override fun onError(response: Response<String>?) {
+                            super.onError(response)
+                            Log.e(TAG, response?.message())
+                        }
+                    })
+        }
+
+        fun <T> parkingCallBack(plate_number: String, dev_type: String, unlocked: Boolean) {
+            Log.e(TAG, "$BASE_URL/licence/parking/callback")
+            OkGo.post<String>("$BASE_URL/licence/parking/callback")
+                    .params("dev_sn", android.os.Build.SERIAL)
+                    .params("plate_number", plate_number)
+                    .params("dev_type", dev_type)
+                    .params("unlocked", unlocked)
+                    .execute(object : StringCallback() {
+                        override fun onSuccess(response: Response<String>) {
+                            Log.e(TAG, response.body())
+                        }
+
+                        override fun onError(response: Response<String>?) {
+                            super.onError(response)
+                            Log.e(TAG, response?.message())
                         }
                     })
         }

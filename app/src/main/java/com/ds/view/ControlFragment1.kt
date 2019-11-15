@@ -19,6 +19,7 @@ import com.ds.R
 import com.ds.common.IDataObserver
 import com.ds.utils.Constant
 import com.ds.utils.HttpsUtils
+import com.ds.utils.ParkBean
 import com.ds.utils.Setting
 import com.serenegiant.usb.widget.UVCCameraTextureView
 
@@ -47,6 +48,11 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
     var mCanSHibie = true
 
     private var mOpenCloseCamera = false
+
+    private var mHasUpdata = false
+
+    private var mFallChepai: String? = null
+    private var mDevType: String? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.control_fragment, container, false)
@@ -109,7 +115,6 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
             }
         }
         mShibieCount?.text = "${mShibieNum}次"
-
         return view
     }
 
@@ -145,12 +150,12 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
         when (p0?.id) {
             R.id.wb_open -> wakeUse()
             R.id.ds_up -> dsUp()
-            R.id.ds_down -> dsFall()
+            R.id.ds_down -> dsFall("", "")
             R.id.camera_open -> {
                 mOpenCloseCamera = true
                 openCamera()
 
-//                GlobalContext.getInstance().notifyDataChanged(Constant.KEY_LICENSE_PLATE_CHECKED, "")
+                GlobalContext.getInstance().notifyDataChanged(Constant.KEY_LICENSE_PLATE_CHECKED, "")
             }
             R.id.camera_close -> {
                 mOpenCloseCamera = false
@@ -184,7 +189,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                 }
                 13 -> {
                     Log.e(TAG, "fall start")
-                    GlobalContext.getInstance().deviceManager.mini.fall()
+                    GlobalContext.getInstance().deviceManager.mini.fall(mFallChepai,mDevType)
                     Log.e(TAG, "fall end")
                 }
                 14 -> {
@@ -216,7 +221,9 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
         hander?.sendEmptyMessage(12)
     }
 
-    private fun dsFall() {
+    private fun dsFall(plate_number: String?, dev_type: String?) {
+        mFallChepai = plate_number
+        mDevType = dev_type
         Log.e(TAG, "dsFall")
         hander?.removeMessages(12)
         hander?.removeMessages(13)
@@ -291,7 +298,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                 val license = o as String
                 Log.e(TAG, " license==$license")
 
-                HttpsUtils.parking(license, object : HttpsUtils.HttpUtilCallBack<String> {
+                HttpsUtils.parking(license, object : HttpsUtils.HttpUtilCallBack<ParkBean> {
                     override fun onFaile(errorCode: Int, errorMsg: String) {
                         for (i in 0 until mActivity!!.mAllowListBeans.size) {
                             if (TextUtils.equals(license, mActivity!!.mAllowListBeans[i].chepai)) {
@@ -301,7 +308,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                                     mShibieCount?.text = "$count 次"
                                     Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
                                     downStopCarTime()
-                                    dsFall()
+                                    dsFall("", "")
                                     mActivity!!.mAllowListBeans[i].count = mActivity!!.mAllowListBeans[i].count + 1
                                     refreShibieCount()
                                     Toast.makeText(activity, "识别车牌 $license 成功", Toast.LENGTH_SHORT).show()
@@ -312,18 +319,19 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                         Toast.makeText(activity, "识别车牌 $license 失败", Toast.LENGTH_SHORT).show()
                     }
 
-                    override fun onSuccess(t: String?) {
+                    override fun onSuccess(t: ParkBean?) {
+                        if (t == null) onFaile(-1, "服务器数据错误")
                         Toast.makeText(activity, "识别车牌 $license 成功", Toast.LENGTH_SHORT).show()
+                        dsFall(t?.plate_number, t?.dev_type)
+                        downStopCarTime()
+                        var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
+                        count++
+                        mShibieCount?.text = "$count 次"
+                        Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
 
                         for (i in 0 until mActivity!!.mAllowListBeans.size) {
                             if (TextUtils.equals(license, mActivity!!.mAllowListBeans[i].chepai)) {
                                 if (mini_status == 1 && mActivity!!.mAllowListBeans[i].isAllow) {
-                                    var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
-                                    count++
-                                    mShibieCount?.text = "$count 次"
-                                    Setting.instance().saveIntData(Constant.KEY_SHIBIE_COUNT, count)
-                                    downStopCarTime()
-                                    dsFall()
                                     mActivity!!.mAllowListBeans[i].count = mActivity!!.mAllowListBeans[i].count + 1
                                     refreShibieCount()
                                 }
@@ -362,6 +370,16 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
             }
             Constant.KEY_MIMI_STATUS_CHANGE -> {
                 mini_status = o as Int
+                if (!mHasUpdata) {
+                    mHasUpdata = true
+                    HttpsUtils.update<String>(when (mini_status) {
+                        1, 0x02 -> 3
+                        0x11 -> 2
+                        0x12 -> 1
+                        else -> 4
+                    }, null, null)
+                }
+
                 if (mini_status == 0) {
                     mDsStatusView?.text = "降落"
                     closeCamera()
@@ -369,6 +387,10 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                     mDsStatusView?.text = "升起"
                 }
             }
+            Constant.KEY_QUERY_POWER_SUCCESS -> {
+                Log.e(TAG, "查询到电量为 $o")
+            }
+
             else -> {
                 Toast.makeText(activity, "${o}", Toast.LENGTH_SHORT).show()
             }
@@ -415,6 +437,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
         GlobalContext.getInstance().unRegestObser(Constant.KEY_CMD_MIMI_ERR, this)
         GlobalContext.getInstance().unRegestObser(Constant.KEY_LICENSE_PLATE_CHECKED, this)
         GlobalContext.getInstance().unRegestObser(Constant.KEY_LICENSE_PLATE_CHECK_NOT, this)
+        GlobalContext.getInstance().unRegestObser(Constant.KEY_QUERY_POWER_SUCCESS, this)
     }
 
     private fun registObsever() {
@@ -433,6 +456,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
         GlobalContext.getInstance().registObserver(Constant.KEY_CMD_MIMI_ERR, this)
         GlobalContext.getInstance().registObserver(Constant.KEY_LICENSE_PLATE_CHECKED, this)
         GlobalContext.getInstance().registObserver(Constant.KEY_LICENSE_PLATE_CHECK_NOT, this)
+        GlobalContext.getInstance().registObserver(Constant.KEY_QUERY_POWER_SUCCESS, this)
     }
 
     override fun distinguishMessage(s: String) {

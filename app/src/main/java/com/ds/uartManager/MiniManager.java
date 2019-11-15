@@ -1,9 +1,11 @@
 package com.ds.uartManager;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.ds.GlobalContext;
 import com.ds.utils.Constant;
+import com.ds.utils.HttpsUtils;
 import com.ds.utils.StringUtil;
 
 import java.io.File;
@@ -27,6 +29,7 @@ public class MiniManager implements IDevice, ParsePack {
     private ReadThread readThread;
     private Thread queryThread;
     private boolean query_thread_flag = true;
+    private Thread powerThread;
 
     public MiniManager() {
         serialPort = new SerialPort(new File("/dev/ttyS3"), 9600, 0);//新串口
@@ -94,7 +97,7 @@ public class MiniManager implements IDevice, ParsePack {
         }
     }
 
-    public void fall() {
+    public void fall(String fallChepai, String dev_type) {
         try {
             if (status == 0) {
                 GlobalContext.getInstance().notifyDataChanged(Constant.KEY_MIMI_START_FALL, "已经是下降状态");
@@ -102,7 +105,7 @@ public class MiniManager implements IDevice, ParsePack {
                 byte[] status_cmd = new byte[]{0x5A, 0x00, 0x01, 0x02, (byte) 0xff, 0x57};
                 write(status_cmd);
             } else {
-                startFall();
+                startFall(fallChepai, dev_type);
             }
         } catch (Exception e) {
             GlobalContext.getInstance().notifyDataChanged(Constant.KEY_CMD_MIMI_ERR, "通信失败");
@@ -150,7 +153,7 @@ public class MiniManager implements IDevice, ParsePack {
         riseThread = null;
     }
 
-    private void startFall() {
+    private void startFall(final String fallChepai, final String dev_type) {
         stopRise();
         stopFall();
         fall_thread_flag = true;
@@ -170,11 +173,17 @@ public class MiniManager implements IDevice, ParsePack {
                     byte[] status_cmd = new byte[]{0x5A, 0x00, 0x01, 0x02, (byte) 0xff, 0x57};
                     try {
                         write(status_cmd);
+                        if (!TextUtils.isEmpty(fallChepai))
+                            HttpsUtils.Companion.parkingCallBack(fallChepai, dev_type, true);
                     } catch (IOException e) {
                         GlobalContext.getInstance().notifyDataChanged(Constant.KEY_CMD_MIMI_ERR, "下降栏杆通信失败");
+                        if (!TextUtils.isEmpty(fallChepai))
+                            HttpsUtils.Companion.parkingCallBack(fallChepai, dev_type, false);
                     }
                 } else {
                     GlobalContext.getInstance().notifyDataChanged(Constant.KEY_MIMI_STATUS_CHANGE, status);
+                    if (!TextUtils.isEmpty(fallChepai))
+                        HttpsUtils.Companion.parkingCallBack(fallChepai, dev_type, false);
                 }
             }
         };
@@ -225,6 +234,25 @@ public class MiniManager implements IDevice, ParsePack {
         queryThread = null;
     }
 
+    private void queryPower() {
+        if (powerThread == null) {
+            powerThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (fall_thread_flag) {
+                        byte[] status_cmd = new byte[]{0x5A, 0x00, 0X03, 0X03, (byte) 0xff, 0x57};
+                        try {
+                            write(status_cmd);
+                        } catch (IOException e) {
+                            GlobalContext.getInstance().notifyDataChanged(Constant.KEY_CMD_MIMI_ERR, "查询车锁电量失败");
+                        }
+                    }
+                }
+            });
+            powerThread.start();
+        }
+    }
+
     @Override
     public void parsePack(byte[] recv, int length) {
         Log.w(TAG, "read = " + StringUtil.bytesToHexString(recv, length));
@@ -244,6 +272,7 @@ public class MiniManager implements IDevice, ParsePack {
                 GlobalContext.getInstance().notifyDataChanged(Constant.KEY_MIMI_START_FALL, "栏杆下降完成");
             }
         } else if (recv[2] == 0x30) {//电量查询返回
+            GlobalContext.getInstance().notifyDataChanged(Constant.KEY_QUERY_POWER_SUCCESS, recv[3]);
             Log.w(TAG, "当前电量为：" + recv[3]);
         }
     }

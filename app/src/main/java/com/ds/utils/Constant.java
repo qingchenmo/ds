@@ -14,6 +14,7 @@ public class Constant {
     public static final int KEY_CMD_MIMI_OK = 0x1006;
     public static final int KEY_MINI_OPEN_FAILED = 0x1007;
     public static final int KEY_MINI_OPEN_SUCCESS = 0x1008;
+    public static final int KEY_QUERY_POWER_SUCCESS = 0x1009;
     /* 雷达探测器ֵ* */
 
     public static final int KEY_USR_DISTANCE = 0x2000;
