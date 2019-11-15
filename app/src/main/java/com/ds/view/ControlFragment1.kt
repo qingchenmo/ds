@@ -155,7 +155,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
                 mOpenCloseCamera = true
                 openCamera()
 
-                GlobalContext.getInstance().notifyDataChanged(Constant.KEY_LICENSE_PLATE_CHECKED, "")
+//                GlobalContext.getInstance().notifyDataChanged(Constant.KEY_LICENSE_PLATE_CHECKED, "")
             }
             R.id.camera_close -> {
                 mOpenCloseCamera = false
