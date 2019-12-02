@@ -9,11 +9,11 @@ import android.util.Log;
 public class DeviceManager {
     private USRManager usr;
 
-    private MiniManager mini;
+//    private MiniManager mini;
 
     public DeviceManager() {
         usr = new USRManager();
-        mini = new MiniManager();
+//        mini = new MiniManager();
 
     }
 
@@ -21,9 +21,9 @@ public class DeviceManager {
         return usr;
     }
 
-    public MiniManager getMini() {
-        return mini;
-    }
+//    public MiniManager getMini() {
+//        return mini;
+//    }
 
     public void open() {
         new Thread() {
@@ -31,7 +31,7 @@ public class DeviceManager {
             public void run() {
                 super.run();
                 Log.w("DeviceManager", "微波探测开启 = " + usr.open());
-                Log.w("DeviceManager", "栏杆探测开启 = " + mini.open());
+//                Log.w("DeviceManager", "栏杆探测开启 = " + mini.open());
             }
         }.start();
 
@@ -39,6 +39,6 @@ public class DeviceManager {
 
     public void close() {
         usr.close();
-        mini.close();
+//        mini.close();
     }
 }

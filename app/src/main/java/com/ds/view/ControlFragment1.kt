@@ -184,12 +184,12 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
 
                 12 -> {
                     Log.e(TAG, "rise start")
-                    GlobalContext.getInstance().deviceManager.mini.rise()
+                    GlobalContext.getInstance().deviceManager.usr.rise()
                     Log.e(TAG, "rise end")
                 }
                 13 -> {
                     Log.e(TAG, "fall start")
-                    GlobalContext.getInstance().deviceManager.mini.fall(mFallChepai,mDevType)
+                    GlobalContext.getInstance().deviceManager.usr.fall(mFallChepai,mDevType)
                     Log.e(TAG, "fall end")
                 }
                 14 -> {
