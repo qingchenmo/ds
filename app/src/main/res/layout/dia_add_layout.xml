@@ -20,7 +20,7 @@
             android:id="@+id/name_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/TRANSPARENT" />
+            android:background="#00000000" />
     </LinearLayout>
 
     <View
@@ -43,7 +43,7 @@
             android:id="@+id/chepai_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/TRANSPARENT" />
+            android:background="#00000000" />
     </LinearLayout>
 
     <View

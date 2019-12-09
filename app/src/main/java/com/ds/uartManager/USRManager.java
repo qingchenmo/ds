@@ -309,7 +309,7 @@ public class USRManager implements IDevice, ParsePack, Runnable {
             }
         } else if (recv[0] == 0x5B) {
             //发送车牌号反馈
-        } else if (recv[1] == 0x02 && recv[2] == 0x40) {
+        } else if (recv[1] == 0x02 && recv[2] == 0x30) {
             Log.w("USRManager", StringUtil.bytesToHexString(recv, length));
             String distance = new String(recv);
             GlobalContext.getInstance().notifyDataChanged(Constant.KEY_USR_DISTANCE, distance);

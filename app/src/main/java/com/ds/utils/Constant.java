@@ -43,4 +43,12 @@ public class Constant {
     public static final String KEY_CHEPAI_LIST = "KEY_CHEPAI_LIST";
 
 
+
+    public static final int LOG = 0x10000;
+    public static final int POWER = 0x10001;
+    public static final int RUKU = 0x10002;
+    public static final int CHUKU = 0x10003;
+    public static final int STATUS_LOCK = 0x10004;
+    public static final int SCAL_OPEN = 0x10005;
+    public static final int XIAJIANG_BACK =0x10006;
 }

@@ -156,6 +156,28 @@
                         android:textColor="#34B3FF"
                         android:textSize="16dp" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地锁电量："
+                        android:textColor="#25252D"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/power"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#34B3FF"
+                        android:textSize="16dp" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -208,6 +230,21 @@
                         android:textColor="#34B3FF"
                         android:textSize="16dp" />
                 </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/log"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+
             </LinearLayout>
         </LinearLayout>
 
