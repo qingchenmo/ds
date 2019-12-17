@@ -335,7 +335,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
             }
             Constant.CHUKU -> {
                 mLog?.text = "出库通知"
-                manager.fall()
+                manager.ris()
                 HttpsUtils.leave()
             }
             Constant.STATUS_LOCK -> {

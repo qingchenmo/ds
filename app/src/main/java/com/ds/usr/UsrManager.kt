@@ -68,7 +68,7 @@ class UsrManager : IDevice, ParsePack {
                 write(API.QUERY_STATUS)
                 delay(1000)
                 write(API.QUERY_POWER)
-                delay(1000 * 60/* * 60*/)
+                delay(1000 * 60 * 60)
             }
         }
     }
