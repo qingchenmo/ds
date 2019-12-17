@@ -13,6 +13,7 @@ class HttpsUtils {
     companion object {
         private const val TAG = "HttpsUtils"
         private const val BASE_URL = "http://jztapi.zcym1688.com/app"
+        var Android_Id = ""
 
         fun parking(chepai: String, callBack: HttpUtilCallBack<ParkBean>) {
             Log.e(TAG, "$BASE_URL/licence/parking")
