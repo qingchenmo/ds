@@ -382,7 +382,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
 
 
     override fun onPause() {
-        GlobalContext.getInstance().deviceManager.close()
+        manager.close()
         unRegistObserver()
         mOpenCloseCamera = false
         closeCamera(true)

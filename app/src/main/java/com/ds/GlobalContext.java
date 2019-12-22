@@ -6,7 +6,6 @@ import android.os.Message;
 import com.ds.common.BeenObser;
 import com.ds.common.GlobleHandle;
 import com.ds.common.IDataObserver;
-import com.ds.uartManager.DeviceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +36,10 @@ public class GlobalContext {
 
     private HashMap<Integer, ArrayList<IDataObserver>> obserMap = new HashMap<Integer, ArrayList<IDataObserver>>();
 
-    private DeviceManager deviceManager;
+//    private DeviceManager deviceManager;
 
     private GlobalContext(){
-        deviceManager = new DeviceManager();
+//        deviceManager = new DeviceManager();
     }
     public static GlobalContext getInstance(){
         if (instance == null){
@@ -80,7 +79,7 @@ public class GlobalContext {
             }
         }
     }
-    public DeviceManager getDeviceManager() {
-        return deviceManager;
-    }
+//    public DeviceManager getDeviceManager() {
+//        return deviceManager;
+//    }
 }

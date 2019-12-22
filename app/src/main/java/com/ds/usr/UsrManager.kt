@@ -47,6 +47,7 @@ class UsrManager : IDevice, ParsePack {
             GlobalContext.getInstance().notifyDataChanged(Constant.LOG, "开启副控开始")
             try {
                 serialPort = android_serialport_api.SerialPort(File("/dev/ttyMT1"), 9600, 0)
+//                serialPort = android_serialport_api.SerialPort(File("/dev/ttyS2"), 9600, 0)
                 isOpen = serialPort?.open() ?: false
             } catch (e: Exception) {
                 GlobalContext.getInstance().notifyDataChanged(Constant.LOG, "开启副控失败")
@@ -79,6 +80,7 @@ class UsrManager : IDevice, ParsePack {
      */
     fun ris() {
         mainScope.launch {
+            delay(5000)
             write(API.SHANGCHENG)
         }
     }
@@ -140,12 +142,12 @@ class UsrManager : IDevice, ParsePack {
     override fun parsePack(recv: ByteArray, length: Int) {
         when (String(recv)) {
             String(API.RUKU) -> {
-                GlobalContext.getInstance().notifyDataChanged(Constant.RUKU, "请求打开摄像机")
                 write(API.RUKUFANKUI)
+                GlobalContext.getInstance().notifyDataChanged(Constant.RUKU, "请求打开摄像机")
             }
             String(API.CHUKU) -> {
-                GlobalContext.getInstance().notifyDataChanged(Constant.CHUKU, "向后台发送通知")
                 write(API.CHUKUFANKUI)
+                GlobalContext.getInstance().notifyDataChanged(Constant.CHUKU, "向后台发送通知")
             }
             String(API.STATUS_SHANGSHENG) -> GlobalContext.getInstance().notifyDataChanged(Constant.STATUS_LOCK, 1)
             String(API.STATUS_XIAJIANG) -> GlobalContext.getInstance().notifyDataChanged(Constant.STATUS_LOCK, 2)
