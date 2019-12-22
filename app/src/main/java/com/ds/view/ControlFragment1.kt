@@ -340,8 +340,14 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
             }
             Constant.STATUS_LOCK -> {
                 mDsStatusView?.text = when (o) {
-                    1 -> "上升"
-                    2 -> "下降"
+                    1 -> {
+                        manager.checkIfCanUnLock()
+                        "上升"
+                    }
+                    2 -> {
+                        manager.httpJOB?.cancel()
+                        "下降"
+                    }
                     3 -> "运动"
                     4 -> "初始"
                     5 -> "上升中"

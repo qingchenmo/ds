@@ -56,7 +56,6 @@ class UsrManager : IDevice, ParsePack {
                 GlobalContext.getInstance().notifyDataChanged(Constant.LOG, "开启副控成功")
                 async { startRead() }
                 async { queryDeviceInfo() }
-//                checkIfCanUnLock()
             } else {
                 GlobalContext.getInstance().notifyDataChanged(Constant.LOG, "开启副控失败")
             }
