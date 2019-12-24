@@ -11,6 +11,7 @@ class UsrManager : IDevice, ParsePack {
     private var serialPort: android_serialport_api.SerialPort? = null
     private var mStatus = -1
     private var isOpen = false
+    var parkWaitTime = 200
 
     object API {
         val QUERY_STATUS = byteArrayOf(0x5A, 0x00, 0x02, 0x01, 0x00, 0x57) //查询锁臂状态
@@ -122,6 +123,7 @@ class UsrManager : IDevice, ParsePack {
     private fun write(data: ByteArray) {
         if (isOpen) {
             mainScope.launch(Dispatchers.IO) {
+                serialPort?.outputStream?.flush()
                 serialPort?.outputStream?.write(data)
             }
         }
@@ -130,6 +132,7 @@ class UsrManager : IDevice, ParsePack {
     override fun read(buf: ByteArray) = serialPort?.inputStream?.read(buf) ?: 0
 
     override fun close() {
+        isOpen = false
         httpJOB?.cancel()
         mainScope.cancel()
         serialPort?.inputStream?.close()
@@ -141,6 +144,7 @@ class UsrManager : IDevice, ParsePack {
     override fun parsePack(recv: ByteArray, length: Int) {
         when (String(recv)) {
             String(API.RUKU) -> {
+                API.RUKUFANKUI[4] = parkWaitTime.toByte()
                 write(API.RUKUFANKUI)
                 GlobalContext.getInstance().notifyDataChanged(Constant.RUKU, "请求打开摄像机")
             }

@@ -11,6 +11,7 @@ public class ParkBean {
     private String plate_number;
     private String dev_type;
     private String dev_sn;
+    private int parkWaitTime;
 
     public String getPlate_number() {
         return plate_number;
@@ -34,5 +35,13 @@ public class ParkBean {
 
     public void setDev_sn(String dev_sn) {
         this.dev_sn = dev_sn;
+    }
+
+    public int getParkWaitTime() {
+        return parkWaitTime;
+    }
+
+    public void setParkWaitTime(int parkWaitTime) {
+        this.parkWaitTime = parkWaitTime;
     }
 }

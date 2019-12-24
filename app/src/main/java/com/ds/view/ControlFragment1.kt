@@ -291,10 +291,14 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
 
                     override fun onSuccess(t: ParkBean?) {
                         try {
-                            if (t == null) onFaile(-1, "服务器数据错误")
+                            if (t == null) {
+                                onFaile(-1, "服务器数据错误")
+                                return
+                            }
+                            manager.parkWaitTime = t.parkWaitTime
                             Toast.makeText(activity, "识别车牌 $license 成功", Toast.LENGTH_SHORT).show()
-                            plate_number = t?.plate_number ?: ""
-                            dev_type = t?.dev_sn ?: ""
+                            plate_number = t.plate_number ?: ""
+                            dev_type = t.dev_sn ?: ""
                             manager.fall()
                             downStopCarTime()
                             var count = Setting.instance().getInt(Constant.KEY_SHIBIE_COUNT, 0)
@@ -383,6 +387,7 @@ class ControlFragment1 : Fragment(), IDataObserver, DistinguishListener, View.On
     override fun onResume() {
         super.onResume()
         registObsever()
+        manager.open()
         manager.checkIfCanUnLock()
     }
 
