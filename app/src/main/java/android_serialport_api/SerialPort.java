@@ -22,52 +22,82 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 
 public class SerialPort {
 
-    private static final String TAG = "SerialPort";
-
-    /*
-     * Do not remove or rename the field mFd: it is used by native method close();
-     */
     private FileDescriptor mFd;
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
-    private File file;
+    private String filePath;
     private int baudrate;
     private int flags;
 
-
-    public SerialPort(File device, int baudrate, int flags) {
-        this.file = device;
+    public SerialPort(String device, int baudrate, int flags) {
+        this.filePath = device;
         this.baudrate = baudrate;
         this.flags = flags;
     }
 
     public boolean open() {
         if (mFd != null && mFileInputStream != null && mFileOutputStream != null) return true;
-        mFd = open(this.file.getAbsolutePath(), baudrate, flags);
-        if (mFd == null) {
-            Log.e(TAG, "native open returns null");
+        try {
+            mFd = open(new File(filePath).getAbsolutePath(), baudrate, flags);
+            if (mFd == null) {
+                return false;
+            }
+            mFileInputStream = new FileInputStream(mFd);
+            mFileOutputStream = new FileOutputStream(mFd);
+            return true;
+        } catch (Throwable e) {
             return false;
         }
-        mFileInputStream = new FileInputStream(mFd);
-        mFileOutputStream = new FileOutputStream(mFd);
-        return true;
     }
 
-    // Getters and setters
-    public InputStream getInputStream() {
-        return mFileInputStream;
+    public boolean reset() {
+        if (mFd == null) return open();
+        try {
+            if (mFileInputStream != null) mFileInputStream.close();
+            if (mFileOutputStream != null) mFileOutputStream.close();
+            mFileInputStream = new FileInputStream(mFd);
+            mFileOutputStream = new FileOutputStream(mFd);
+            return true;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
-    public OutputStream getOutputStream() {
-        return mFileOutputStream;
+    public boolean write(byte[] bytes) {
+        if (mFileOutputStream == null) return false;
+        try {
+            mFileOutputStream.write(bytes);
+            mFileOutputStream.flush();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
-    // JNI
+    public int read(byte[] bytes) {
+        if (mFileInputStream == null) return -1;
+        try {
+            return mFileInputStream.read(bytes);
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+    public void release() {
+        try {
+            mFd = null;
+            if (mFileOutputStream != null) mFileOutputStream.close();
+            if (mFileInputStream != null) mFileInputStream.close();
+//            close();
+        } catch (Throwable e) {
+            Log.e("SerialPort", "release exception msg == " + e.getMessage());
+        }
+    }
+
     private native static FileDescriptor open(String path, int baudrate, int flags);
 
     public native void close();

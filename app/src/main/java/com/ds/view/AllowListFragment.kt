@@ -16,14 +16,14 @@ class AllowListFragment : Fragment() {
 
     private val TAG = "AllowListFragment"
     private var mAllowListView: RecyclerView? = null
-    private var mActivity: MainActivity1? = null
+    private var mActivity: MainActivity? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.allow_list_fragment, container, false)
-        mActivity = activity as MainActivity1
+        mActivity = activity as MainActivity
         mAllowListView = view?.findViewById(R.id.allow_list)
 
-        view?.findViewById<View>(R.id.add)?.setOnClickListener { mActivity?.addAllowInfo(null) }
+        view?.findViewById<View>(R.id.add)?.setOnClickListener { mActivity?.addAllowInfo() }
 
         var layoutManager = LinearLayoutManager(activity)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -37,7 +37,7 @@ class AllowListFragment : Fragment() {
         mAllowListView?.adapter?.notifyDataSetChanged()
     }
 
-    class AllowRecycleAdapter(context: MainActivity1, list: ArrayList<AllowListBean>) : RecyclerView.Adapter<AllowRecycleHolder>() {
+    class AllowRecycleAdapter(context: MainActivity, list: ArrayList<AllowListBean>) : RecyclerView.Adapter<AllowRecycleHolder>() {
         private var mContext = context
         private var mAllowListBeans = list
         override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): AllowRecycleHolder {
@@ -78,7 +78,7 @@ class AllowListFragment : Fragment() {
             }
 
             holder?.confirm?.setOnClickListener {
-                mContext.confirAllowInfo(mAllowListBeans[position])
+                mContext.conferAllowInfo(mAllowListBeans[position])
             }
         }
     }
