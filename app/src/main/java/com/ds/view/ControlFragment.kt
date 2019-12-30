@@ -32,6 +32,8 @@ import com.ds.utils.Constant
 import com.ds.utils.SharPUtils
 import com.serenegiant.usb.widget.UVCCameraTextureView
 import kotlinx.coroutines.*
+import java.math.BigDecimal
+import java.text.DecimalFormat
 
 
 class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, ServerUtils.CheckUnLockListener {
@@ -268,7 +270,8 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
                 DISTANCE_INFO -> {
                     if (isHidden && !isVisible) return@withContext
-                    mThingDisanceView?.text = arg.toString() + "米"
+
+                    mThingDisanceView?.text = "${BigDecimal(arg.toString()).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble()}米"
                     val dis = arg as Double
                     mHasThingView?.text = "无"
                     if (dis > 0 && dis <= MathUtils.mMaxDis && cameraUtils?.isOpen() == false && manager.canFall() && timeout <= 0) {

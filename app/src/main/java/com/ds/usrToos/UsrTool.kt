@@ -4,7 +4,6 @@ import android.util.Log
 import android_serialport_api.SerialPort
 import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
-import java.lang.Exception
 
 class UsrTool(private val fragment: ControlFragment) {
     private val mainScope = MainScope()
@@ -165,10 +164,10 @@ class UsrTool(private val fragment: ControlFragment) {
             }
             else -> {
                 if (byteArray[1].toInt() == 0x02 && byteArray[2].toInt() == 0x30) {
-                    val dis = MathUtils.disMath(byteArray[3], byteArray[4])
+                    val dis = MathUtils.disMath(byteArray[3], byteArray[4]) * 0.01
                     fragment.operateResult(Constant.DISTANCE_INFO, dis)
                 } else if (byteArray[1].toInt() == 0x00 && byteArray[2].toInt() == 0x30) {
-                    val power = MathUtils.disPower(byteArray[3])
+                    val power = MathUtils.disPower(byteArray[3], byteArray[4])
                     if (powerStatus != power) {
                         powerStatus = power
                         fragment.operateResult(Constant.POWER_STATUS, powerStatus)
