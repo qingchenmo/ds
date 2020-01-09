@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aiwinn.carbranddect.able.DistinguishListener
 import com.ds.R
-import com.ds.usrToos.CameraUtils
+import com.ds.usrToos.*
 import com.ds.usrToos.Constant.DISTANCE_INFO
 import com.ds.usrToos.Constant.LOCK_FALL_STATUS
 import com.ds.usrToos.Constant.LOCK_FIRST_STATUS
@@ -25,15 +25,10 @@ import com.ds.usrToos.Constant.SEND_LOCK_FALL_SUCCESS
 import com.ds.usrToos.Constant.SEND_LOCK_RISE_FEED_BACK
 import com.ds.usrToos.Constant.SEND_LOCK_RISE_SUCCESS
 import com.ds.usrToos.Constant.SEND_OPEN_LIGHT
-import com.ds.usrToos.MathUtils
-import com.ds.usrToos.ServerUtils
-import com.ds.usrToos.UsrTool
 import com.ds.utils.Constant
 import com.ds.utils.SharPUtils
 import com.serenegiant.usb.widget.UVCCameraTextureView
 import kotlinx.coroutines.*
-import java.math.BigDecimal
-import java.text.DecimalFormat
 
 
 class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, ServerUtils.CheckUnLockListener {
@@ -51,17 +46,21 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
     private var mLog: TextView? = null
     private var mLightView: TextView? = null
     private var mDisSpinner: Spinner? = null
+    private var mCameraFace: View? = null
 
     private var mActivity: MainActivity? = null
 
     private var mShibieNum = 0
 
     private val manager = UsrTool(this)
+    private val lockManager = LockTool(this)
     private var cameraUtils: CameraUtils? = null
     private val serverUtils = ServerUtils(this)
     private var mStopTimeJob: Job? = null
     private var mOpenCameraJob: Job? = null
-
+    private var mJiaoYanJob: Job? = null
+    private var mCanRise = false
+    private var mRiseDownJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.control_fragment, container, false)
@@ -77,6 +76,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         mHasThingView = view?.findViewById(R.id.has_thing)
         mThingDisanceView = view?.findViewById(R.id.thing_disance)
         mCameraStatusView = view?.findViewById(R.id.camera_status)
+        mCameraFace = view?.findViewById(R.id.camera_face)
 
         mShibieCount = view?.findViewById(R.id.shibie_count)
         mPower = view?.findViewById(R.id.power)
@@ -87,10 +87,8 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
         mUVCCameraView = view?.findViewById(R.id.uvc_car_camera)
         cameraUtils = CameraUtils(this, mUVCCameraView!!, this)
-        cameraUtils?.init(activity)
 
         initShiBieNum()
-        manager.open()
         return view
     }
 
@@ -126,7 +124,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
     override fun onClick(p0: View?) {
         when (p0?.id) {
-            R.id.wb_open -> manager.open()
+            R.id.wb_open -> manager.jiaoZhun()
             R.id.ds_up -> rise()
             R.id.ds_down -> fall()
             R.id.camera_open -> openCamera()
@@ -136,22 +134,33 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
     private fun rise() {
         if (timeout > 0) {
-            Toast.makeText(activity, "请等待倒计时完成", Toast.LENGTH_SHORT).show()
             return
         }
-        manager.rise()
+        lockManager.rise()
     }
 
     private fun fall() {
         if (timeout > 0) {
-            Toast.makeText(activity, "请等待倒计时完成", Toast.LENGTH_SHORT).show()
             return
         }
-        manager.fall()
+        lockManager.fall()
     }
 
     private fun openCamera() {
         mOpenCameraJob?.cancel()
+        mOpenCameraJob = MainScope().launch {
+            cameraUtils?.isPriview = true
+            mCameraFace?.visibility = View.GONE
+            mLog?.text = "打开摄像头"
+            mCameraStatusView?.text = "打开"
+            mCameraStatusView?.text = "打开"
+            manager.openLight()
+            delay(5000)
+            if (cameraUtils?.isOpen() == true) closeCamera()
+        }
+
+        /*mOpenCameraJob?.cancel()
+        mLog?.text = "打开摄像头"
         mOpenCameraJob = MainScope().launch {
             val result = cameraUtils?.start()
             if (result == true) {
@@ -160,14 +169,17 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
             } else {
                 mCameraStatusView?.text = "关闭"
             }
-            delay(10000)
+            delay(5000)
             if (cameraUtils?.isOpen() == true) closeCamera()
-        }
+        }*/
     }
 
     private fun closeCamera() {
         mOpenCameraJob?.cancel()
-        cameraUtils?.stop()
+        cameraUtils?.isPriview = false
+        mCameraFace?.visibility = View.VISIBLE
+//        mOpenCameraJob?.cancel()
+//        cameraUtils?.stop()
         mCameraStatusView?.text = "关闭"
         manager.closeLight()
     }
@@ -185,6 +197,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                 delay(1000)
                 timeout--
             }
+            timeout = 0
             mWbTime?.visibility = View.GONE
         }
     }
@@ -193,16 +206,21 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         super.onPause()
         mUVCCameraView?.onPause()
         closeCamera()
+        cameraUtils?.release()
     }
 
     override fun onResume() {
         super.onResume()
         mUVCCameraView?.onResume()
+        manager.open()
+        lockManager.open()
+        cameraUtils?.init(activity)
     }
 
     override fun onDestroy() {
+        mJiaoYanJob?.cancel()
         manager.release()
-        cameraUtils?.release()
+        lockManager.release()
         super.onDestroy()
     }
 
@@ -217,16 +235,35 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         if (isSuccess) {
             fall()
             referShanieCount()
+            closeCamera()
         }
     }
 
     override fun distinguishMessage(s: String) {
-        MainScope().launch(Dispatchers.Main) {
-            Toast.makeText(activity, "检测到车牌 $s", Toast.LENGTH_SHORT).show()
+        try {
             if (s.isNotEmpty()) {
-                closeCamera()
-                if (manager.canFall()) serverUtils.parking(s)
+                var chepai = if (s.contains(',')) s.replace(",", "", false) else s
+                chepai = if (s.contains('_')) s.split("_")[0] else chepai
+                if (MathUtils.isCarNo(chepai)) {
+                    MainScope().launch(Dispatchers.Main) {
+                        Toast.makeText(activity, "检测到车牌 $chepai", Toast.LENGTH_SHORT).show()
+                        closeCamera()
+                        if (lockManager.canFall()) serverUtils.parking(chepai)
+                    }
+                }
             }
+        } catch (e: Exception) {
+
+        }
+    }
+
+    private fun jiaoYan() {
+        mJiaoYanJob = MainScope().launch {
+            if (!manager.jiaoYanSuccess && lockManager.canFall()) {
+                manager.jiaoZhun()
+            } else if (manager.jiaoYanSuccess) return@launch
+            delay(2000)
+            jiaoYan()
         }
     }
 
@@ -243,6 +280,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                     serverUtils.upStatus(1)
                 }
                 SEND_LOCK_RISE_SUCCESS -> {
+                    jiaoYan()
                     mDsStatusView?.text = arg.toString()
                     serverUtils.level()
                     serverUtils.startCheck()
@@ -262,29 +300,43 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                     mDsStatusView?.text = arg.toString()
                     serverUtils.upStatus(3)
                 }
-                LOCK_FIRST_STATUS,
+                LOCK_FIRST_STATUS -> {
+                    mDsStatusView?.text = arg.toString()
+                    serverUtils.startCheck()
+                }
                 LOCK_RISE_STATUS -> {
+                    jiaoYan()
                     mDsStatusView?.text = arg.toString()
                     serverUtils.startCheck()
                 }
 
                 DISTANCE_INFO -> {
-                    if (isHidden && !isVisible) return@withContext
-
-                    mThingDisanceView?.text = "${BigDecimal(arg.toString()).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble()}米"
+                    mThingDisanceView?.text = "${arg}米"
                     val dis = arg as Double
                     mHasThingView?.text = "无"
-                    if (dis > 0 && dis <= MathUtils.mMaxDis && cameraUtils?.isOpen() == false && manager.canFall() && timeout <= 0) {
+                    if (dis > 0 && dis <= MathUtils.mMaxDis && cameraUtils?.isOpen() == false && lockManager.canFall() && timeout <= 0) {
+                        mRiseDownJob?.cancel()
+                        mCanRise = false
                         openCamera()
                     } else if (dis in 0.05..0.9) {
                         mHasThingView?.text = "有"
-                    } else if ((dis < 0.05 || dis > 0.9) && timeout <= 0 && cameraUtils?.isOpen() == false) {
-                        rise()
+                        mRiseDownJob?.cancel()
+                        mCanRise = false
+                    } else if ((dis < 0.05 || dis > 0.9) && timeout <= 0 && cameraUtils?.isOpen() == false && lockManager.canRise()) {
+                        if (mCanRise) {
+                            rise()
+                            mCanRise = false
+                        } else if (mRiseDownJob == null || mRiseDownJob?.isActive == false) {
+                            mRiseDownJob = MainScope().async {
+                                delay(3000)
+                                mCanRise = true
+                            }
+                        }
                     }
                 }
                 POWER_STATUS -> {
-                    mPower?.text = arg.toString()
-                    serverUtils.upStatus(electric_quantity = arg as Int)
+//                    mPower?.text = arg.toString()
+                    serverUtils.upStatus(electric_quantity = lockManager.power1, electric_capacity = lockManager.power2)
                 }
                 SEND_OPEN_LIGHT -> {
                     mLightView?.text = "打开"
@@ -294,5 +346,11 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                 }
             }
         }
+    }
+
+    private suspend fun downTimeRise() {
+        delay(3000)
+        mCanRise = false
+
     }
 }

@@ -11,9 +11,13 @@ class DisSpinnerAdapter : AdapterView.OnItemSelectedListener {
 
     }
 
-    override fun onItemSelected(adapterView: AdapterView<*>, view: View, i: Int, l: Long) {
-        val disString = adapterView.getItemAtPosition(i).toString()
-        MathUtils.mMaxDis = disString.toFloat()
-        SharPUtils.saveFloat(Constant.KEY_MINI_DOWN_DIS, MathUtils.mMaxDis)
+    override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
+        try {
+            val disString = adapterView?.getItemAtPosition(i).toString()
+            MathUtils.mMaxDis = disString.toFloat()
+            SharPUtils.saveFloat(Constant.KEY_MINI_DOWN_DIS, MathUtils.mMaxDis)
+        } catch (e: Exception) {
+
+        }
     }
 }

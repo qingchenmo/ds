@@ -35,7 +35,7 @@ object HttpsUtils {
 
                     override fun onError(response: Response<String>?) {
                         super.onError(response)
-                        Log.e(TAG, response?.message())
+                        Log.e(TAG, response?.message() ?: "")
                         callBack.onFaile(0, "")
                     }
                 })
@@ -46,12 +46,13 @@ object HttpsUtils {
      * @param lock_status 地锁锁臂状态,1:下降/已开锁,2:上升/已上锁,3:运动,4:初始
      * @param electric_quantity 地锁剩余电量,0-100整数
      */
-    fun update(lock_status: Int = 0, electric_quantity: Int = 0) {
+    fun update(lock_status: Int = 0, electric_quantity: Int = 0, electric_capacity: Int = 0) {
         Log.e(TAG, "$BASE_URL/oplock/update")
         OkGo.post<String>("$BASE_URL/oplock/update")
                 .params("devSn", android.os.Build.SERIAL)
                 .params("lock_status", lock_status)
                 .params("electric_quantity", electric_quantity)
+                .params("electric_capacity", electric_capacity)
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
                         Log.e(TAG, response.body())
@@ -59,7 +60,7 @@ object HttpsUtils {
 
                     override fun onError(response: Response<String>?) {
                         super.onError(response)
-                        Log.e(TAG, response?.message())
+                        Log.e(TAG, response?.message() ?: "")
                     }
                 })
     }
@@ -84,7 +85,7 @@ object HttpsUtils {
 
                     override fun onError(response: Response<String>?) {
                         super.onError(response)
-                        Log.e(TAG, response?.message())
+                        Log.e(TAG, response?.message() ?: "")
                     }
                 })
     }
@@ -111,7 +112,7 @@ object HttpsUtils {
 
                     override fun onError(response: Response<String>?) {
                         super.onError(response)
-                        Log.e(TAG, response?.message())
+                        Log.e(TAG, response?.message() ?: "")
                         callBack.onFaile(0, "")
                     }
                 })
@@ -129,7 +130,7 @@ object HttpsUtils {
 
                     override fun onError(response: Response<String>?) {
                         super.onError(response)
-                        Log.e(TAG, response?.message())
+                        Log.e(TAG, response?.message() ?: "")
                     }
                 })
     }

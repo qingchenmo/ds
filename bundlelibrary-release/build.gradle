@@ -1,2 +1,0 @@
-configurations.maybeCreate("default")
-artifacts.add("default", file('CarBrand-release_CH_F100_AIWINN_20191031-20200301.aar'))

@@ -42,8 +42,8 @@ class ServerUtils(val listener: CheckUnLockListener) {
         devType = ""
     }
 
-    fun upStatus(lock_status: Int = 0, electric_quantity: Int = 0) {
-        HttpsUtils.update(lock_status, electric_quantity)
+    fun upStatus(lock_status: Int = 0, electric_quantity: Int = 0, electric_capacity: Int = 0) {
+        HttpsUtils.update(lock_status, electric_quantity, electric_capacity)
     }
 
     fun startCheck() {

@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.aiwinn.adv.library.AdSdkManager;
 import com.aiwinn.adv.library.SettingManager;
+import com.aiwinn.carbranddect.utils.LogUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
@@ -41,11 +42,31 @@ public class App extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkStoragePermission()) {
                 Log.e("App", "有权限 初始化");
-                CarBrandManager.init(getApplicationContext(), 0, null);
+                CarBrandManager.init(getApplicationContext(), 0, new InitListener() {
+                    @Override
+                    public void succ() {
+                        LogUtils.e("CarBrandManager init succ ");
+                    }
+
+                    @Override
+                    public void fail(int code, String msg) {
+                        LogUtils.e("CarBrandManager init fail code is " + code + "  msg is " + msg);
+                    }
+                });
                 isInit = true;
             }
         } else {
-            CarBrandManager.init(getApplicationContext(), 0, null);
+            CarBrandManager.init(getApplicationContext(), 0, new InitListener() {
+                @Override
+                public void succ() {
+                    LogUtils.e("CarBrandManager init succ ");
+                }
+
+                @Override
+                public void fail(int code, String msg) {
+                    LogUtils.e("CarBrandManager init fail code is " + code + "  msg is " + msg);
+                }
+            });
             isInit = true;
         }
     }
