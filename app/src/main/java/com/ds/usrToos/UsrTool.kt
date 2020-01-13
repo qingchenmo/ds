@@ -25,6 +25,18 @@ class UsrTool(private val fragment: ControlFragment) {
     fun jiaoZhun() {
         mainScope.launch(Dispatchers.IO) {
             val result = serialPort?.write(Constant.wireJiaoZhun) ?: false
+            openLight()
+            delay(500)
+            closeLight()
+            delay(500)
+            openLight()
+            delay(500)
+            closeLight()
+            delay(500)
+            openLight()
+            delay(500)
+            closeLight()
+
         }
     }
 
