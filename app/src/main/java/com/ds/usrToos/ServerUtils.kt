@@ -12,8 +12,8 @@ class ServerUtils(val listener: CheckUnLockListener) {
     private var mCheckJob: Job? = null
 
 
-    fun parking(license: String) {
-        HttpsUtils.parking(license, object : HttpsUtils.HttpUtilCallBack<ParkBean> {
+    fun parking(license: String, color: String) {
+        HttpsUtils.parking(license, color,object : HttpsUtils.HttpUtilCallBack<ParkBean> {
             override fun onSuccess(t: ParkBean?) {
                 if (t == null) {
                     onFaile(-1, "服务器数据错误")

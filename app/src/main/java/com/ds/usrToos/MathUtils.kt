@@ -5,7 +5,7 @@ import java.util.regex.Pattern
 
 
 object MathUtils {
-    var mMaxDis = 2.4f
+    var mMaxDis = 3.6f
     var stopCarTime = 30
     fun disMath(byte1: Byte, byte2: Byte): Int {
         var b = (byte2.toInt())

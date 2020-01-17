@@ -15,11 +15,12 @@ object HttpsUtils {
     /**
      * 根据地锁设备ID和车牌号校验是否开锁
      */
-    fun parking(chepai: String, callBack: HttpUtilCallBack<ParkBean>) {
+    fun parking(chepai: String, color: String, callBack: HttpUtilCallBack<ParkBean>) {
         Log.e(TAG, "$BASE_URL/licence/parking")
         OkGo.get<String>("$BASE_URL/licence/parking")
                 .params("dev_sn", android.os.Build.SERIAL)
                 .params("plate_number", chepai)
+                .params("color", color)
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
                         try {

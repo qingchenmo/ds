@@ -76,7 +76,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         mHasThingView = view?.findViewById(R.id.has_thing)
         mThingDisanceView = view?.findViewById(R.id.thing_disance)
         mCameraStatusView = view?.findViewById(R.id.camera_status)
-        mCameraFace = view?.findViewById(R.id.camera_face)
+//        mCameraFace = view?.findViewById(R.id.camera_face)
 
         mShibieCount = view?.findViewById(R.id.shibie_count)
         mPower = view?.findViewById(R.id.power)
@@ -107,7 +107,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
     private fun initSpanner() {
         mDisSpinner?.onItemSelectedListener = DisSpinnerAdapter()
-        setSpinnerItemSelectedByValue(mDisSpinner, SharPUtils.getFloat(Constant.KEY_MINI_DOWN_DIS, 2.4f).toString())
+        setSpinnerItemSelectedByValue(mDisSpinner, SharPUtils.getFloat(Constant.KEY_MINI_DOWN_DIS, 3.6f).toString())
     }
 
     private fun setSpinnerItemSelectedByValue(spinner: Spinner?, value: String) {
@@ -147,7 +147,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
     }
 
     private fun openCamera() {
-        mOpenCameraJob?.cancel()
+        /*mOpenCameraJob?.cancel()
         mOpenCameraJob = MainScope().launch {
             cameraUtils?.isPriview = true
             mCameraFace?.visibility = View.GONE
@@ -157,9 +157,9 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
             manager.openLight()
             delay(5000)
             if (cameraUtils?.isOpen() == true) closeCamera()
-        }
+        }*/
 
-        /*mOpenCameraJob?.cancel()
+        mOpenCameraJob?.cancel()
         mLog?.text = "打开摄像头"
         mOpenCameraJob = MainScope().launch {
             val result = cameraUtils?.start()
@@ -171,15 +171,15 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
             }
             delay(5000)
             if (cameraUtils?.isOpen() == true) closeCamera()
-        }*/
+        }
     }
 
     private fun closeCamera() {
-        mOpenCameraJob?.cancel()
-        cameraUtils?.isPriview = false
-        mCameraFace?.visibility = View.VISIBLE
 //        mOpenCameraJob?.cancel()
-//        cameraUtils?.stop()
+//        cameraUtils?.isPriview = false
+//        mCameraFace?.visibility = View.VISIBLE
+        mOpenCameraJob?.cancel()
+        cameraUtils?.stop()
         mCameraStatusView?.text = "关闭"
         manager.closeLight()
     }
@@ -188,6 +188,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
 
     private fun downStopCarTime(isFall: Boolean) {
+        MathUtils.stopCarTime = if (isFall) 30 else 5
         mStopTimeJob?.cancel()
         mStopTimeJob = MainScope().launch {
             timeout = MathUtils.stopCarTime
@@ -241,15 +242,13 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
     override fun distinguishMessage(s: String) {
         try {
-            if (s.isNotEmpty()) {
-                var chepai = if (s.contains(',')) s.replace(",", "", false) else s
-                chepai = if (s.contains('_')) s.split("_")[0] else chepai
-                if (MathUtils.isCarNo(chepai)) {
-                    MainScope().launch(Dispatchers.Main) {
-                        Toast.makeText(activity, "检测到车牌 $chepai", Toast.LENGTH_SHORT).show()
-                        closeCamera()
-                        if (lockManager.canFall()) serverUtils.parking(chepai)
-                    }
+            if (s.isNotEmpty() && s.contains('_')) {
+                val chepai = s.split("_")[0]
+                val color = s.split('_')[1]
+                MainScope().launch(Dispatchers.Main) {
+                    Toast.makeText(activity, "检测到车牌 $chepai  颜色 $color", Toast.LENGTH_SHORT).show()
+                    closeCamera()
+                    if (lockManager.canFall()) serverUtils.parking(chepai, color)
                 }
             }
         } catch (e: Exception) {
