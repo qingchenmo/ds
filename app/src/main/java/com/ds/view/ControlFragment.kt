@@ -188,7 +188,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
 
     private fun downStopCarTime(isFall: Boolean) {
-        MathUtils.stopCarTime = if (isFall) 30 else 5
+        MathUtils.stopCarTime = if (isFall) MathUtils.parkingWaitSeconds else MathUtils.outboundWaitSeconds
         mStopTimeJob?.cancel()
         mStopTimeJob = MainScope().launch {
             timeout = MathUtils.stopCarTime
@@ -313,7 +313,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                     mThingDisanceView?.text = "${arg}米"
                     val dis = arg as Double
                     mHasThingView?.text = "无"
-                    if (dis > 0 && dis <= MathUtils.mMaxDis && cameraUtils?.isOpen() == false && lockManager.canFall() && timeout <= 0) {
+                    if (dis > 0 && dis <= MathUtils.triggerDistance && cameraUtils?.isOpen() == false && lockManager.canFall() && timeout <= 0) {
                         mRiseDownJob?.cancel()
                         mCanRise = false
                         openCamera()
@@ -327,7 +327,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                             mCanRise = false
                         } else if (mRiseDownJob == null || mRiseDownJob?.isActive == false) {
                             mRiseDownJob = MainScope().async {
-                                delay(3000)
+                                delay(MathUtils.outboundCheckSeconds.toLong() * 1000)
                                 mCanRise = true
                             }
                         }

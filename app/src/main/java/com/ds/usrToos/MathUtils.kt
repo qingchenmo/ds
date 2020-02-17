@@ -5,8 +5,12 @@ import java.util.regex.Pattern
 
 
 object MathUtils {
-    var mMaxDis = 3.6f
+    var mMaxDis = 2.4f
     var stopCarTime = 30
+    var triggerDistance = 2.4f
+    var parkingWaitSeconds = 30
+    var outboundWaitSeconds = 3
+    var outboundCheckSeconds = 6
     fun disMath(byte1: Byte, byte2: Byte): Int {
         var b = (byte2.toInt())
         if (b < 0) b = (b and 0xff)

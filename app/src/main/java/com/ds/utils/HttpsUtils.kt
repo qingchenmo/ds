@@ -3,6 +3,7 @@ package com.ds.utils
 import android.util.Log
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.TypeReference
+import com.ds.usrToos.MathUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
@@ -57,6 +58,17 @@ object HttpsUtils {
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
                         Log.e(TAG, response.body())
+                        try {
+                            Log.e(TAG, response.body())
+                            val s = JSON.parseObject(response.body(), object : TypeReference<HttpBean<UpDataBean>>() {})
+                            if (s.code == 200) {
+                                MathUtils.triggerDistance = s.data.triggerDistance
+                                MathUtils.outboundCheckSeconds = s.data.outboundCheckSeconds
+                                MathUtils.outboundWaitSeconds = s.data.outboundWaitSeconds
+                                MathUtils.parkingWaitSeconds = s.data.parkingWaitSeconds
+                            }
+                        } catch (e: Exception) {
+                        }
                     }
 
                     override fun onError(response: Response<String>?) {

@@ -23,6 +23,10 @@ class ServerUtils(val listener: CheckUnLockListener) {
                 plateNumber = t.plate_number
                 devType = t.dev_type
                 MathUtils.stopCarTime = t.parkWaitTime
+                MathUtils.triggerDistance = t.triggerDistance
+                MathUtils.outboundCheckSeconds = t.outboundCheckSeconds
+                MathUtils.outboundWaitSeconds = t.outboundWaitSeconds
+                MathUtils.parkingWaitSeconds = t.parkingWaitSeconds
             }
 
             override fun onFaile(errorCode: Int, errorMsg: String) {

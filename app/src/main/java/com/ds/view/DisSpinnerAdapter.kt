@@ -14,8 +14,8 @@ class DisSpinnerAdapter : AdapterView.OnItemSelectedListener {
     override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, i: Int, l: Long) {
         try {
             val disString = adapterView?.getItemAtPosition(i).toString()
-            MathUtils.mMaxDis = disString.toFloat()
-            SharPUtils.saveFloat(Constant.KEY_MINI_DOWN_DIS, MathUtils.mMaxDis)
+            MathUtils.triggerDistance = disString.toFloat()
+            SharPUtils.saveFloat(Constant.KEY_MINI_DOWN_DIS, MathUtils.triggerDistance)
         } catch (e: Exception) {
 
         }

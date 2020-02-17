@@ -12,6 +12,42 @@ public class ParkBean {
     private String dev_type;
     private String dev_sn;
     private int parkWaitTime;
+    private int parkingWaitSeconds;
+    private int outboundCheckSeconds;
+    private int outboundWaitSeconds;
+    private float triggerDistance;
+
+    public int getParkingWaitSeconds() {
+        return parkingWaitSeconds;
+    }
+
+    public void setParkingWaitSeconds(int parkingWaitSeconds) {
+        this.parkingWaitSeconds = parkingWaitSeconds;
+    }
+
+    public int getOutboundCheckSeconds() {
+        return outboundCheckSeconds;
+    }
+
+    public void setOutboundCheckSeconds(int outboundCheckSeconds) {
+        this.outboundCheckSeconds = outboundCheckSeconds;
+    }
+
+    public int getOutboundWaitSeconds() {
+        return outboundWaitSeconds;
+    }
+
+    public void setOutboundWaitSeconds(int outboundWaitSeconds) {
+        this.outboundWaitSeconds = outboundWaitSeconds;
+    }
+
+    public float getTriggerDistance() {
+        return triggerDistance;
+    }
+
+    public void setTriggerDistance(float triggerDistance) {
+        this.triggerDistance = triggerDistance;
+    }
 
     public String getPlate_number() {
         return plate_number;

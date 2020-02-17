@@ -2,6 +2,7 @@ package com.ds.usrToos
 
 import android.util.Log
 import android_serialport_api.SerialPort
+import com.ds.utils.HttpsUtils
 import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
 
@@ -17,6 +18,7 @@ class LockTool(private val fragment: ControlFragment) {
 
     private var mIsRise = false
     private var mIsFall = false
+    private var mLockNum = 0
 
     fun open() {
         if (serialPort != null) return
@@ -65,6 +67,17 @@ class LockTool(private val fragment: ControlFragment) {
             val result = serialPort?.write(Constant.riseBytes) ?: false
             fragment.operateResult(Constant.SEND_LOCK_RISE, result)
         }
+        MainScope().launch {
+            delay(2000)
+            if (mIsRise) {
+                mIsRise = false
+                if (mLockNum < 2)
+                    rise()
+                else {
+                    HttpsUtils.update(5)
+                }
+            }
+        }
     }
 
 
@@ -82,6 +95,7 @@ class LockTool(private val fragment: ControlFragment) {
     fun fall() {
         if (mIsFall || mIsFall) return
         mIsFall = true
+        mLockNum++
         mainScope.launch(Dispatchers.IO) {
             if (lockStatus == 2 || lockStatus == 0) {
                 fragment.operateResult(Constant.LOG, "锁臂已经下降或者移动中")
@@ -90,6 +104,17 @@ class LockTool(private val fragment: ControlFragment) {
             Log.e("bbb", "fall ")
             val result = serialPort?.write(fallBytes) ?: false
             fragment.operateResult(Constant.SEND_LOCK_FALL, result)
+        }
+        MainScope().launch {
+            delay(2000)
+            if (mIsFall) {
+                mIsFall = false
+                if (mLockNum < 2)
+                    fall()
+                else {
+                    HttpsUtils.update(5)
+                }
+            }
         }
     }
 
