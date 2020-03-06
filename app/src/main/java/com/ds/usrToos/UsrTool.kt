@@ -1,6 +1,7 @@
 package com.ds.usrToos
 
 import android_serialport_api.SerialPort
+import com.ds.utils.LightUtils
 import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
 
@@ -48,7 +49,8 @@ class UsrTool(private val fragment: ControlFragment) {
 
     fun openLight() {
         mainScope.launch(Dispatchers.IO) {
-            val result = serialPort?.write(Constant.openLightBytes) ?: false
+                val result = LightUtils.PowerControl(handle = 1)
+//            val result = serialPort?.write(Constant.openLightBytes) ?: false
             fragment.operateResult(Constant.SEND_OPEN_LIGHT, result)
             if (!result) reset()
         }
@@ -56,7 +58,8 @@ class UsrTool(private val fragment: ControlFragment) {
 
     fun closeLight() {
         mainScope.launch(Dispatchers.IO) {
-            val result = serialPort?.write(Constant.closeLightBytes) ?: false
+            val result = LightUtils.PowerControl(handle = 0)
+//            val result = serialPort?.write(Constant.closeLightBytes) ?: false
             fragment.operateResult(Constant.SEND_CLOSE_LIGHT, result)
             if (!result) reset()
         }
