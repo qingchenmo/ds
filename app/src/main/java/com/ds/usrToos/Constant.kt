@@ -47,7 +47,7 @@ object Constant {
     val closeLightBytes = byteArrayOf(0x5B)
 
     /**微波校准*/
-    val wireJiaoZhun = byteArrayOf(0x5C)
+    val wireJiaoZhun = byteArrayOf(0x41,0x54,0x2B,0x43,0x41,0x4C,0x0A)
 
 
 }
