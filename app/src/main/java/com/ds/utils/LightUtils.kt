@@ -29,6 +29,18 @@ object LightUtils {
                 } else {
                     cmdStirng = "-wdout 21 0"
                 }
+            } else if (num == 4) {
+                if(handle == 1){
+                    cmdStirng = "-wdir 87 1"
+                }else {
+                    cmdStirng = "-wdir 87 0"
+                }
+            }else if (num==5){
+                if(handle == 1){
+                    cmdStirng = "-wdout 87 1"
+                }else {
+                    cmdStirng = "-wdout 87 0"
+                }
             }
 
             val e = FileWriter(w_file)

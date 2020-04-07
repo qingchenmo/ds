@@ -49,7 +49,8 @@ class UsrTool(private val fragment: ControlFragment) {
 
     fun openLight() {
         mainScope.launch(Dispatchers.IO) {
-                val result = LightUtils.PowerControl(handle = 1)
+            val result = LightUtils.PowerControl(num = 4, handle = 1)
+            LightUtils.PowerControl(num = 5, handle = 1)
 //            val result = serialPort?.write(Constant.openLightBytes) ?: false
             fragment.operateResult(Constant.SEND_OPEN_LIGHT, result)
             if (!result) reset()
@@ -58,7 +59,7 @@ class UsrTool(private val fragment: ControlFragment) {
 
     fun closeLight() {
         mainScope.launch(Dispatchers.IO) {
-            val result = LightUtils.PowerControl(handle = 0)
+            val result = LightUtils.PowerControl(num = 5, handle = 0)
 //            val result = serialPort?.write(Constant.closeLightBytes) ?: false
             fragment.operateResult(Constant.SEND_CLOSE_LIGHT, result)
             if (!result) reset()
