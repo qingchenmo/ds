@@ -145,6 +145,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         if (timeout > 0) {
             return
         }
+        serverUtils.stopCheck()
         lockManager.fall()
     }
 

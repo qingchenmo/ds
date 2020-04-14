@@ -13,7 +13,7 @@ class ServerUtils(val listener: CheckUnLockListener) {
 
 
     fun parking(license: String, color: String) {
-        HttpsUtils.parking(license, color,object : HttpsUtils.HttpUtilCallBack<ParkBean> {
+        HttpsUtils.parking(license, color, object : HttpsUtils.HttpUtilCallBack<ParkBean> {
             override fun onSuccess(t: ParkBean?) {
                 if (t == null) {
                     onFaile(-1, "服务器数据错误")
@@ -52,20 +52,25 @@ class ServerUtils(val listener: CheckUnLockListener) {
 
     fun startCheck() {
         mCheckJob?.cancel()
-        mCheckJob = mainScope.launch {
+        mCheckJob = mainScope.async {
             while (isActive) {
                 checkCanUnLock()
                 delay(3000)
+                startCheck()
             }
         }
+    }
+
+    fun stopCheck() {
+        mCheckJob?.cancel()
     }
 
     private fun checkCanUnLock() {
         HttpsUtils.checkIfCanUnLock(object : HttpsUtils.HttpUtilCallBack<Int> {
             override fun onSuccess(t: Int?) {
-                mCheckJob?.cancel()
                 listener.needUnLock()
                 MathUtils.stopCarTime = t ?: 30
+                mCheckJob?.cancel()
             }
 
             override fun onFaile(errorCode: Int, errorMsg: String) {
