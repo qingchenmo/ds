@@ -5,6 +5,7 @@ import android_serialport_api.SerialPort
 import com.ds.utils.HttpsUtils
 import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
+import java.io.ByteArrayInputStream
 
 class LockTool(private val fragment: ControlFragment) {
     private val mainScope = MainScope()
@@ -185,8 +186,17 @@ class LockTool(private val fragment: ControlFragment) {
             }
             else -> {
                 if (byteArray[1].toInt() == 0x00 && byteArray[2].toInt() == 0x30) {
-                    val power1 = byteArray[3].toInt()
-                    val power2 = byteArray[4].toInt()
+                    val powerByte1 = ByteArray(1)
+                    powerByte1[0] = byteArray[3]
+                    val byInput1 = ByteArrayInputStream(powerByte1)
+                    val power1 = byInput1.read()
+                    val powerByte2 = ByteArray(1)
+                    powerByte2[0] = byteArray[4]
+                    val byInput2 = ByteArrayInputStream(powerByte2)
+                    val power2 = byInput2.read()
+
+//                    val power1 = byteArray[3].toInt()
+//                    val power2 = byteArray[4].toInt()
 //                    val power = MathUtils.disPower(byteArray[3], byteArray[4])
                     if (this.power1 != power1 || this.power2 != power2) {
                         this.power1 = power1

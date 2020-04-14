@@ -61,6 +61,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
     private var mJiaoYanJob: Job? = null
     private var mCanRise = false
     private var mRiseDownJob: Job? = null
+    private var mWatchDogTool = WatchDogTool()
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.control_fragment, container, false)
@@ -89,6 +90,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         cameraUtils = CameraUtils(this, mUVCCameraView!!, this)
 
         initShiBieNum()
+        mWatchDogTool.open()
         return view
     }
 
@@ -222,6 +224,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         mJiaoYanJob?.cancel()
         manager.release()
         lockManager.release()
+        mWatchDogTool.release()
         super.onDestroy()
     }
 
