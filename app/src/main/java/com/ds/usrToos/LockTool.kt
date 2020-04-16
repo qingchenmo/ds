@@ -132,6 +132,7 @@ class LockTool(private val fragment: ControlFragment) {
             }
             String(Constant.riseSuccessBytes) -> {
                 if (lockStatus != 1) {
+                    mLockNum = 0
                     fragment.operateResult(Constant.SEND_LOCK_RISE_SUCCESS, "上升")
                     lockStatus = 1
                     delay(2000)
@@ -147,6 +148,7 @@ class LockTool(private val fragment: ControlFragment) {
             }
             String(Constant.fallSuccessBytes) -> {
                 if (lockStatus != 2) {
+                    mLockNum = 0
                     fragment.operateResult(Constant.SEND_LOCK_FALL_SUCCESS, "下降")
                     lockStatus = 2
                     delay(2000)
