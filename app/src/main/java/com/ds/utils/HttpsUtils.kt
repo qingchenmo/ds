@@ -11,7 +11,7 @@ import com.lzy.okgo.model.Response
 
 object HttpsUtils {
     private const val TAG = "HttpsUtils"
-    private const val BASE_URL = "http://jztapi.zcym1688.com/app"
+    private const val BASE_URL = "http://api.jzt.zcymkj.com/app"
 
     /**
      * 根据地锁设备ID和车牌号校验是否开锁

@@ -68,9 +68,11 @@ class ServerUtils(val listener: CheckUnLockListener) {
     private fun checkCanUnLock() {
         HttpsUtils.checkIfCanUnLock(object : HttpsUtils.HttpUtilCallBack<Int> {
             override fun onSuccess(t: Int?) {
-                listener.needUnLock()
-                MathUtils.stopCarTime = t ?: 30
-                mCheckJob?.cancel()
+                if (t!=null){
+                    listener.needUnLock(t)
+                    MathUtils.stopCarTime = t ?: 30
+                    mCheckJob?.cancel()
+                }
             }
 
             override fun onFaile(errorCode: Int, errorMsg: String) {
@@ -80,7 +82,7 @@ class ServerUtils(val listener: CheckUnLockListener) {
 
 
     interface CheckUnLockListener {
-        fun needUnLock()
+        fun needUnLock(data:Int)
         fun parkingResult(isSuccess: Boolean, msg: String)
     }
 }

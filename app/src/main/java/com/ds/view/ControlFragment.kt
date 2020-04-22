@@ -1,6 +1,9 @@
 package com.ds.view
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -229,9 +232,25 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         super.onDestroy()
     }
 
-    override fun needUnLock() {
-        //轮询到扫码开锁，打开地锁
-        fall()
+    override fun needUnLock(data: Int) {
+        if (data == 1) {
+            //轮询到扫码开锁，打开地锁
+            fall()
+        } else if (data == 2) {
+            rise()
+        } else if (data == 3) {
+            fall()
+        } else if (data == 4) {
+            try {
+                val intent = activity.packageManager.getLaunchIntentForPackage(activity.packageName)
+                val restartIntent = PendingIntent.getActivity(activity.applicationContext, 0, intent, PendingIntent.FLAG_ONE_SHOT)
+                val mgr = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 50, restartIntent)
+                android.os.Process.killProcess(android.os.Process.myPid())
+            } catch (e: Throwable) {
+
+            }
+        }
     }
 
     override fun parkingResult(isSuccess: Boolean, msg: String) {
