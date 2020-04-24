@@ -1,5 +1,6 @@
 package com.ds.usrToos
 
+import com.ds.utils.HttpBean
 import com.ds.utils.HttpsUtils
 import com.ds.utils.ParkBean
 import kotlinx.coroutines.*
@@ -66,12 +67,16 @@ class ServerUtils(val listener: CheckUnLockListener) {
     }
 
     private fun checkCanUnLock() {
-        HttpsUtils.checkIfCanUnLock(object : HttpsUtils.HttpUtilCallBack<Int> {
-            override fun onSuccess(t: Int?) {
-                if (t!=null){
-                    listener.needUnLock(t)
-                    MathUtils.stopCarTime = t ?: 30
-                    mCheckJob?.cancel()
+        HttpsUtils.checkIfCanUnLock(object : HttpsUtils.HttpUtilCallBack<HttpBean<Int>> {
+            override fun onSuccess(t: HttpBean<Int>?) {
+                if (t != null) {
+                    try {
+                        listener.needUnLock(t.msg.toInt())
+                        MathUtils.stopCarTime = t.data ?: 30
+                        mCheckJob?.cancel()
+                    } catch (e: Throwable) {
+
+                    }
                 }
             }
 
@@ -82,7 +87,7 @@ class ServerUtils(val listener: CheckUnLockListener) {
 
 
     interface CheckUnLockListener {
-        fun needUnLock(data:Int)
+        fun needUnLock(data: Int)
         fun parkingResult(isSuccess: Boolean, msg: String)
     }
 }

@@ -29,6 +29,7 @@ import com.ds.usrToos.Constant.SEND_LOCK_RISE_FEED_BACK
 import com.ds.usrToos.Constant.SEND_LOCK_RISE_SUCCESS
 import com.ds.usrToos.Constant.SEND_OPEN_LIGHT
 import com.ds.utils.Constant
+import com.ds.utils.HttpsUtils
 import com.ds.utils.SharPUtils
 import com.serenegiant.usb.widget.UVCCameraTextureView
 import kotlinx.coroutines.*
@@ -222,6 +223,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         manager.open()
         lockManager.open()
         cameraUtils?.init(activity)
+        HttpsUtils.parkingCallBack("鲁Q77777","operationalLock",true)
     }
 
     override fun onDestroy() {

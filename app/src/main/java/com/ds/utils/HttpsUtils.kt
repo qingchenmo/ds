@@ -87,13 +87,14 @@ object HttpsUtils {
     fun parkingCallBack(plate_number: String, dev_type: String, unlocked: Boolean) {
         Log.e(TAG, "$BASE_URL/licence/parking/callback")
         OkGo.post<String>("$BASE_URL/licence/parking/callback")
-                .params("dev_sn", android.os.Build.SERIAL)
+                .params("devSn", android.os.Build.SERIAL)
                 .params("plate_number", plate_number)
                 .params("dev_type", dev_type)
                 .params("unlocked", unlocked)
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
-                        Log.e(TAG, response.body())
+                        val str = response.body()
+                        Log.e(TAG,str)
                     }
 
                     override fun onError(response: Response<String>?) {
@@ -106,7 +107,7 @@ object HttpsUtils {
     /**
      * 地锁每3秒一轮询此接口判断是否需要开锁
      */
-    fun checkIfCanUnLock(callBack: HttpUtilCallBack<Int>) {
+    fun checkIfCanUnLock(callBack: HttpUtilCallBack<HttpBean<Int>>) {
         Log.e(TAG, "$BASE_URL/oplock/checkIfCanUnLock")
         OkGo.get<String>("$BASE_URL/oplock/checkIfCanUnLock")
                 .params("devSn", android.os.Build.SERIAL)
@@ -116,7 +117,7 @@ object HttpsUtils {
                             Log.e(TAG, response.body())
                             var s = JSON.parseObject(response.body(), object : TypeReference<HttpBean<Int>>() {})
                             if (s.code == 200)
-                                callBack.onSuccess(s.data)
+                                callBack.onSuccess(s)
                             else callBack.onFaile(s.code, s.msg)
                         } catch (e: Exception) {
                             callBack.onFaile(-1, e.message!!)

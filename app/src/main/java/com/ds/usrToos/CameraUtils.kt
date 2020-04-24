@@ -1,6 +1,7 @@
 package com.ds.usrToos
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.hardware.usb.UsbDevice
 import android.util.Log
 import com.aiwinn.carbranddect.CarBrandManager
@@ -90,6 +91,8 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
                 Log.e("onPreviewFrame", "probeResult has >> $has")
                 if (has) {
                     CarBrandManager.distinguishBitmap(bitmap, listener)
+                }else{
+                    val bit = Bitmap.createBitmap(bitmap)
                 }
             })
         }

@@ -72,7 +72,7 @@ class LockTool(private val fragment: ControlFragment) {
             delay(2000)
             if (mIsRise) {
                 mIsRise = false
-                if (mLockNum < 2)
+                if (mLockNum < 5)
                     rise()
                 else {
                     HttpsUtils.update(5)
@@ -110,7 +110,7 @@ class LockTool(private val fragment: ControlFragment) {
             delay(2000)
             if (mIsFall) {
                 mIsFall = false
-                if (mLockNum < 2)
+                if (mLockNum < 5)
                     fall()
                 else {
                     HttpsUtils.update(5)
