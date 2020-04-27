@@ -2,8 +2,11 @@ package com.ds.view
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.os.BatteryManager
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AlertDialog
@@ -16,9 +19,7 @@ import android.widget.Toast
 import com.aiwinn.carbranddect.App
 import com.aiwinn.carbranddect.CarBrandManager
 import com.ds.R
-import com.ds.utils.Constant
-import com.ds.utils.PermissionUitl
-import com.ds.utils.SharPUtils
+import com.ds.utils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     private var mTl: TabLayout? = null
 
     var mAllowListBeans = arrayListOf<AllowListBean>()
+    private val mPowerBroadcastReceiver = PowerBroadcastReceiver()
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -71,6 +73,17 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         mTl = findViewById(R.id.tl)
         mTl?.addOnTabSelectedListener(this)
         showFragment(0)
+        //注册接收器以获取电量信息
+        val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        var battery = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        if (battery > 100) battery = 100 else if (battery < 0) battery = 0
+        HttpsUtils.update(amount = battery)
+        registerReceiver(mPowerBroadcastReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(mPowerBroadcastReceiver)
+        super.onDestroy()
     }
 
     private var mControlFragment: ControlFragment? = null

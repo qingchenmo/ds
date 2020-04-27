@@ -223,7 +223,6 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         manager.open()
         lockManager.open()
         cameraUtils?.init(activity)
-        HttpsUtils.parkingCallBack("鲁Q77777","operationalLock",true)
     }
 
     override fun onDestroy() {

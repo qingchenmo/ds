@@ -7,6 +7,7 @@ import com.ds.usrToos.MathUtils
 import com.lzy.okgo.OkGo
 import com.lzy.okgo.callback.StringCallback
 import com.lzy.okgo.model.Response
+import java.io.File
 
 
 object HttpsUtils {
@@ -48,34 +49,35 @@ object HttpsUtils {
      * @param lock_status 地锁锁臂状态,1:下降/已开锁,2:上升/已上锁,3:运动,4:初始
      * @param electric_quantity 地锁剩余电量,0-100整数
      */
-    fun update(lock_status: Int = 0, electric_quantity: Int = 0, electric_capacity: Int = 0) {
+    fun update(lock_status: Int = 0, electric_quantity: Int = 0, electric_capacity: Int = 0, amount: Int = -1) {
         Log.e(TAG, "$BASE_URL/oplock/update")
-        OkGo.post<String>("$BASE_URL/oplock/update")
+        val post = OkGo.post<String>("$BASE_URL/oplock/update")
                 .params("devSn", android.os.Build.SERIAL)
-                .params("lock_status", lock_status)
-                .params("electric_quantity", electric_quantity)
-                .params("electric_capacity", electric_capacity)
-                .execute(object : StringCallback() {
-                    override fun onSuccess(response: Response<String>) {
-                        Log.e(TAG, response.body())
-                        try {
-                            Log.e(TAG, response.body())
-                            val s = JSON.parseObject(response.body(), object : TypeReference<HttpBean<UpDataBean>>() {})
-                            if (s.code == 200) {
-                                MathUtils.triggerDistance = s.data.triggerDistance
-                                MathUtils.outboundCheckSeconds = s.data.outboundCheckSeconds
-                                MathUtils.outboundWaitSeconds = s.data.outboundWaitSeconds
-                                MathUtils.parkingWaitSeconds = s.data.parkingWaitSeconds
-                            }
-                        } catch (e: Exception) {
-                        }
+        if (lock_status != 0) post.params("lock_status", lock_status)
+        post.params("electric_quantity", electric_quantity)
+        post.params("electric_capacity", electric_capacity)
+        if (amount != -1) post.params("amount", amount)
+        post.execute(object : StringCallback() {
+            override fun onSuccess(response: Response<String>) {
+                Log.e(TAG, response.body())
+                try {
+                    Log.e(TAG, response.body())
+                    val s = JSON.parseObject(response.body(), object : TypeReference<HttpBean<UpDataBean>>() {})
+                    if (s.code == 200) {
+                        MathUtils.triggerDistance = s.data.triggerDistance
+                        MathUtils.outboundCheckSeconds = s.data.outboundCheckSeconds
+                        MathUtils.outboundWaitSeconds = s.data.outboundWaitSeconds
+                        MathUtils.parkingWaitSeconds = s.data.parkingWaitSeconds
                     }
+                } catch (e: Exception) {
+                }
+            }
 
-                    override fun onError(response: Response<String>?) {
-                        super.onError(response)
-                        Log.e(TAG, response?.message() ?: "")
-                    }
-                })
+            override fun onError(response: Response<String>?) {
+                super.onError(response)
+                Log.e(TAG, response?.message() ?: "")
+            }
+        })
     }
 
     /**
@@ -94,7 +96,7 @@ object HttpsUtils {
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
                         val str = response.body()
-                        Log.e(TAG,str)
+                        Log.e(TAG, str)
                     }
 
                     override fun onError(response: Response<String>?) {
@@ -148,6 +150,25 @@ object HttpsUtils {
                     }
                 })
     }
+
+
+    fun imageRecFailure(file: File) {
+        Log.e(TAG, "$BASE_URL/upload/imageRecFailure")
+        OkGo.post<String>("$BASE_URL/upload/imageRecFailure")
+                .params("devSn", android.os.Build.SERIAL)
+                .params("file", file)
+                .execute(object : StringCallback() {
+                    override fun onSuccess(response: Response<String>) {
+                        Log.e(TAG, response.body())
+                    }
+
+                    override fun onError(response: Response<String>?) {
+                        super.onError(response)
+                        Log.e(TAG, response?.message() ?: "")
+                    }
+                })
+    }
+
 
     interface HttpUtilCallBack<T> {
         fun onSuccess(t: T?)

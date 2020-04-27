@@ -7,11 +7,18 @@ import android.util.Log
 import com.aiwinn.carbranddect.CarBrandManager
 import com.aiwinn.carbranddect.able.DistinguishListener
 import com.aiwinn.carbranddect.able.ProbeCardListener
+import com.ds.utils.HttpsUtils
 import com.ds.view.ControlFragment
 import com.jiangdg.usbcamera.UVCCameraHelper
 import com.serenegiant.usb.common.AbstractUVCCameraHandler
 import com.serenegiant.usb.widget.CameraViewInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class CameraUtils(private val listener: DistinguishListener, private val previewView: CameraViewInterface, val fragment: ControlFragment)
     : UVCCameraHelper.OnMyDevConnectListener, AbstractUVCCameraHandler.OnPreViewResultListener {
@@ -91,10 +98,46 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
                 Log.e("onPreviewFrame", "probeResult has >> $has")
                 if (has) {
                     CarBrandManager.distinguishBitmap(bitmap, listener)
-                }else{
+                } else {
                     val bit = Bitmap.createBitmap(bitmap)
+                    val tempBitmap = bit.copy(Bitmap.Config.ARGB_8888, false)
+                    val dir = "/sdcard/aiwinn/ds/pic"
+                    val file = File(dir)
+                    if (!file.exists() || !file.isDirectory) file.mkdirs()
+                    val picPath = dir + "cameraPic.jpg"
+                    MainScope().launch(Dispatchers.IO) {
+                        compressImage(tempBitmap)
+                    }
                 }
             })
+        }
+    }
+
+    private fun compressImage(bitmap: Bitmap) {
+        try {
+            val baos = ByteArrayOutputStream()
+            var options = 100
+            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos)
+            while (baos.toByteArray().size / 1024 > 100) {
+                baos.reset()
+                options -= 10
+                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos)
+            }
+            val dir = "/sdcard/aiwinn/ds/pic"
+            val fileDir = File(dir)
+            if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
+            else if (fileDir.length() > 1024 * 1024 * 20) {
+                fileDir.delete()
+            }
+            val picPath = dir + System.currentTimeMillis() + "cameraPic.jpg"
+            val file = File(picPath)
+            val fos = FileOutputStream(file)
+            fos.write(baos.toByteArray())
+            fos.flush()
+            fos.close()
+            bitmap.recycle()
+            HttpsUtils.imageRecFailure(file)
+        } catch (e: Throwable) {
         }
     }
 

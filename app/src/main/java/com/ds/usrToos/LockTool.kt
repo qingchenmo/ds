@@ -49,7 +49,7 @@ class LockTool(private val fragment: ControlFragment) {
         withContext(Dispatchers.IO) {
             serialPort?.write(Constant.queryLockStatus)
             delay(2000)
-            serialPort?.write(Constant.queryPowerStatus)
+//            serialPort?.write(Constant.queryPowerStatus)
             delay(3600000)
             queryStatus()
         }
