@@ -30,6 +30,7 @@ import okhttp3.OkHttpClient;
 public class App extends Application {
     public static boolean isInit;
     public static SharedPreferences sp;
+    public static Context context;
 
     @Override
     public void onCreate() {
@@ -38,6 +39,7 @@ public class App extends Application {
         OkGo.getInstance().init(this);
         initHttp();
         authorizationInit(this);
+        context = this;
         sp = getSharedPreferences("CarBrand_SP", 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkStoragePermission()) {

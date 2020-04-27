@@ -98,7 +98,6 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
                 Log.e("onPreviewFrame", "probeResult has >> $has")
                 if (has) {
                     CarBrandManager.distinguishBitmap(bitmap, listener)
-                } else {
                     val bit = Bitmap.createBitmap(bitmap)
                     val tempBitmap = bit.copy(Bitmap.Config.ARGB_8888, false)
                     val dir = "/sdcard/aiwinn/ds/pic"
