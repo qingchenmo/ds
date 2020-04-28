@@ -5,14 +5,16 @@ import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.TypeReference
 import com.ds.usrToos.MathUtils
 import com.lzy.okgo.OkGo
+import com.lzy.okgo.callback.FileCallback
 import com.lzy.okgo.callback.StringCallback
+import com.lzy.okgo.model.Progress
 import com.lzy.okgo.model.Response
 import java.io.File
 
 
 object HttpsUtils {
     private const val TAG = "HttpsUtils"
-    private const val BASE_URL = "http://api.jzt.zcymkj.com/app"
+    const val BASE_URL = "http://api.jzt.zcymkj.com/app"
 
     /**
      * 根据地锁设备ID和车牌号校验是否开锁
@@ -167,6 +169,52 @@ object HttpsUtils {
                         Log.e(TAG, response?.message() ?: "")
                     }
                 })
+    }
+
+    fun latestVersion(
+            callBack: HttpUtilCallBack<AppLastVersionBean>
+    ) {
+        val res = OkGo.get<String>("$BASE_URL/apk/latestVersion")
+        res.execute(object : StringCallback() {
+            override fun onSuccess(response: Response<String>) {
+                try {
+                    Log.e(TAG, response.body())
+                    val s = JSON.parseObject(
+                            response.body(),
+                            AppLastVersionBean::class.java
+                    )
+                    callBack.onSuccess(s)
+                } catch (e: Exception) {
+                    callBack.onFaile(-1, e.message!!)
+                }
+            }
+
+            override fun onError(response: Response<String>?) {
+                super.onError(response)
+                Log.e(TAG, response?.message() ?: "")
+                callBack.onFaile(0, response?.message() ?: "")
+            }
+        })
+    }
+
+    fun appDownload(url: String, callBack: HttpUtilCallBack<File>) {
+        val res = OkGo.get<File>(url)
+        res.execute(object : FileCallback("地锁.apk") {
+            override fun onSuccess(response: Response<File>?) {
+                if (response?.body()?.isFile == true) callBack.onSuccess(response.body())
+                else callBack.onFaile(response?.code() ?: 0, response?.message() ?: "")
+            }
+
+            override fun downloadProgress(progress: Progress?) {
+                super.downloadProgress(progress)
+
+            }
+
+            override fun onError(response: Response<File>?) {
+                super.onError(response)
+                callBack.onFaile(response?.code() ?: -1, response?.message() ?: "")
+            }
+        })
     }
 
 

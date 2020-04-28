@@ -1,8 +1,6 @@
 package com.ds.usrToos
 
 import android_serialport_api.SerialPort
-import com.ds.utils.LightUtils
-import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
 
 class WatchDogTool {

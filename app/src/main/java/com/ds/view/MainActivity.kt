@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.aiwinn.carbranddect.App
@@ -22,6 +23,12 @@ import com.ds.R
 import com.ds.utils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
@@ -79,6 +86,7 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
         if (battery > 100) battery = 100 else if (battery < 0) battery = 0
         HttpsUtils.update(amount = battery)
         registerReceiver(mPowerBroadcastReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        appUpdata()
     }
 
     override fun onDestroy() {
@@ -186,6 +194,45 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
     fun referAllowListView() {
         mAllowListFragment?.refreList()
         SharPUtils.saveData(Constant.KEY_CHEPAI_LIST, Gson().toJson(mAllowListBeans))
+    }
+
+    private fun appUpdata() {
+        HttpsUtils.latestVersion(object : HttpsUtils.HttpUtilCallBack<AppLastVersionBean> {
+            override fun onSuccess(t: AppLastVersionBean?) {
+                if (t != null && t.code == 200) {
+                    for (i in 0 until (t.data.size)) {
+                        if (t.data[i].platform == 1 && t.data[i].versionnum > AppUtils.getVersionCode(
+                                        this@MainActivity
+                                )
+                        ) {
+                            app_updata_tips.visibility = View.VISIBLE
+                            HttpsUtils.appDownload("${HttpsUtils.BASE_URL}/${t.data[i].downloadUrl}", object : HttpsUtils.HttpUtilCallBack<File> {
+                                override fun onSuccess(t: File?) {
+                                    if (t?.isFile == true && t.exists()) {
+                                        app_updata_tips_test.text = "下载成功，正在安装..."
+                                        MainScope().launch(Dispatchers.IO) {
+                                            val result = AppUtils.AppInstall(t.absolutePath)
+                                            withContext(Dispatchers.Main) {
+                                                app_updata_tips_test.text = if (result) "安装成功" else "安装失败"
+                                            }
+                                        }
+                                    }
+                                }
+
+                                override fun onFaile(errorCode: Int, errorMsg: String) {
+                                    app_updata_tips_test.text = "App更新失败"
+                                }
+                            })
+                            return
+                        }
+                    }
+                }
+                onFaile(-1, t?.msg ?: "")
+            }
+
+            override fun onFaile(errorCode: Int, errorMsg: String) {
+            }
+        })
     }
 
 }
