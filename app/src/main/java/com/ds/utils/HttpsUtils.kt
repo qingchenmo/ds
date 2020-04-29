@@ -14,6 +14,7 @@ import java.io.File
 
 object HttpsUtils {
     private const val TAG = "HttpsUtils"
+    const val DOWN_URL = "http://api.jzt.zcymkj.com"
     const val BASE_URL = "http://api.jzt.zcymkj.com/app"
 
     /**

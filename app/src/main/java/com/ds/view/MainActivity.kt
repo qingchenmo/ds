@@ -206,7 +206,9 @@ class MainActivity : AppCompatActivity(), TabLayout.OnTabSelectedListener {
                                 )
                         ) {
                             app_updata_tips.visibility = View.VISIBLE
-                            HttpsUtils.appDownload("${HttpsUtils.BASE_URL}/${t.data[i].downloadUrl}", object : HttpsUtils.HttpUtilCallBack<File> {
+                            var downUrl = t.data[i].downloadUrl
+                            if (!downUrl.startsWith("http")) downUrl = "${HttpsUtils.DOWN_URL}/${t.data[i].downloadUrl}"
+                            HttpsUtils.appDownload(downUrl, object : HttpsUtils.HttpUtilCallBack<File> {
                                 override fun onSuccess(t: File?) {
                                     if (t?.isFile == true && t.exists()) {
                                         app_updata_tips_test.text = "下载成功，正在安装..."
