@@ -14,8 +14,9 @@ import java.io.File
 
 object HttpsUtils {
     private const val TAG = "HttpsUtils"
-    const val DOWN_URL = "http://api.jzt.zcymkj.com"
-    const val BASE_URL = "http://api.jzt.zcymkj.com/app"
+//    const val DOWN_URL = "http://api.jzt.zcymkj.com"
+    const val DOWN_URL = "http://jztapi.zcym1688.com"
+    const val BASE_URL = "$DOWN_URL/app"
 
     /**
      * 根据地锁设备ID和车牌号校验是否开锁

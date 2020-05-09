@@ -7,8 +7,8 @@ android {
         applicationId "com.ds"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 38
-        versionName "1.1.1"
+        versionCode 41
+        versionName "2.1.41"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -32,7 +32,7 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             //这里修改apk文件名
-            outputFileName = "地锁_v${variant.versionCode}.apk"
+            outputFileName = "地锁_v${variant.versionName}.apk"
         }
     }
 }
