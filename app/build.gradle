@@ -7,8 +7,8 @@ android {
         applicationId "com.ds"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 41
-        versionName "2.1.41"
+        versionCode 42
+        versionName "1.1.42"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {

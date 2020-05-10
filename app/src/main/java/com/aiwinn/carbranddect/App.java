@@ -12,6 +12,7 @@ import android.util.Log;
 import com.aiwinn.adv.library.AdSdkManager;
 import com.aiwinn.adv.library.SettingManager;
 import com.aiwinn.carbranddect.utils.LogUtils;
+import com.ds.utils.MyUncaughtExceptionHandler;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
@@ -36,6 +37,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         CrashReport.initCrashReport(getApplicationContext(), "20abbf813d", true);
+        //设置该CrashHandler为程序的默认处理器
         OkGo.getInstance().init(this);
         initHttp();
         authorizationInit(this);
@@ -71,6 +73,7 @@ public class App extends Application {
             });
             isInit = true;
         }
+        Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(this));
     }
 
     private void initHttp() {

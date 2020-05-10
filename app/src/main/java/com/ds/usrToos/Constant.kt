@@ -43,13 +43,13 @@ object Constant {
     val powerFeedBack = byteArrayOf(0x5A, 0x00, 0x20, 0x00, 0x00, 0x57)//地锁下降状态 4为电压 5为小数点位
 
     /**补光灯指令*/
-    val openLightBytes = byteArrayOf(0x5A)
-    val closeLightBytes = byteArrayOf(0x5B)
+    val openLightBytes = byteArrayOf(0x5A) //开补光灯
+    val closeLightBytes = byteArrayOf(0x5B) //关补光灯
 
     /**微波校准*/
-    val wireJiaoZhun = byteArrayOf(0x41,0x54,0x2B,0x43,0x41,0x4C,0x0A)
+    val wireJiaoZhun = byteArrayOf(0x41,0x54,0x2B,0x43,0x41,0x4C,0x0A) //微波校准
 
-    val watchDog = byteArrayOf(0xFA.toByte(),0x16,0x00,0xEC.toByte())
+    val watchDog = byteArrayOf(0xFA.toByte(),0x16,0x00,0xEC.toByte())   //喂狗
 
 
 }
