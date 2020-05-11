@@ -9,6 +9,9 @@ import kotlinx.coroutines.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.*
 
 class UsrTool(private val fragment: ControlFragment) {
     private val mainScope = MainScope()
@@ -92,7 +95,7 @@ class UsrTool(private val fragment: ControlFragment) {
         }
     }
 
-    private fun writeLog(byteArray: ByteArray) {
+    private fun writeLog(byteArray: String) {
         try {
             val dir = "/sdcard/aiwinn/ds/log"
             val fileDir = File(dir)
@@ -100,15 +103,22 @@ class UsrTool(private val fragment: ControlFragment) {
             else if (fileDir.length() > 1024 * 1024 * 5) {
                 fileDir.delete()
             }
-            val picPath = dir + "usrTool.txt"
-            val file = File(picPath)
-            val fos = FileOutputStream(file)
+            val picPath = dir + File.separator + "usrTool.txt"
+            val fos = FileWriter(picPath,true)
+            fos.write(getTime()+"           ")
             fos.write(byteArray)
-            fos.write("/n".toByteArray())
+            fos.write("\r\n")
             fos.flush()
             fos.close()
         } catch (e: Throwable) {
         }
+    }
+
+    private fun getTime():String{
+        val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+        val curDate = Date(System.currentTimeMillis())
+        val str = formatter.format(curDate)
+        return str
     }
 
     private suspend fun parseReadBuffer(byteArray: ByteArray) {
@@ -120,7 +130,7 @@ class UsrTool(private val fragment: ControlFragment) {
                 if (disArray.isNotEmpty()) {
                     jiaoYanSuccess = true
                     fragment.operateResult(Constant.DISTANCE_INFO, disArray[0].toDouble())
-                    writeLog(byteArray)
+                    writeLog(newdis)
                 }
             } catch (e: Throwable) {
 
