@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import com.aiwinn.carbranddect.App
 import com.ice.entity.PlateRecognitionParameter
@@ -13,10 +14,7 @@ import com.ice.iceplate.ActivateService
 import com.ice.iceplate.RecogService
 
 class CarRecogUtils(context: Context) {
-    init {
-        bindLoginService(context)
-//        login()
-    }
+
 
     var acBinder: ActivateService.ActivateBinder? = null
     val acConnection = object : ServiceConnection {
@@ -30,16 +28,22 @@ class CarRecogUtils(context: Context) {
     }
 
     fun bindLoginService(context: Context) {
-        val actiIntent = Intent(context, ActivateService::class.java)
-        context.bindService(actiIntent, acConnection, Service.BIND_AUTO_CREATE)
+        try {
+            val actiIntent = Intent(context, ActivateService::class.java)
+            context.bindService(actiIntent, acConnection, Service.BIND_AUTO_CREATE)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            Log.e(CarRecogUtils::class.java.name, "bindLoginService exception == ${e.message}")
+        }
     }
 
     fun unBindLoginService(context: Context) {
         context.unbindService(acConnection)
     }
 
-    fun login() {
+    fun login(): Boolean {
         val acResult = acBinder?.login("ESUXILHNU4YWKVW7")
+        Log.e(CarRecogUtils::class.java.name, "acResult == $acResult")
         when (acResult) {
             0 -> Toast.makeText(App.context, "恭喜,程序激活成功!", Toast.LENGTH_SHORT).show()
             1795 -> Toast.makeText(App.context, "程序激活失败,激活的机器数量已达上限，授权码不能在更多的机器 上使用", Toast.LENGTH_SHORT).show()
@@ -48,6 +52,7 @@ class CarRecogUtils(context: Context) {
             284 -> Toast.makeText(App.context, "程序激活失败,授权码输入错误，请检查授权码拼写是否正确", Toast.LENGTH_SHORT).show()
             else -> Toast.makeText(App.context, "程序激活失败,错误码为：$acResult", Toast.LENGTH_SHORT).show()
         }
+        return acResult == 0
     }
 
     var recogBinder: RecogService.MyBinder? = null
@@ -87,4 +92,9 @@ class CarRecogUtils(context: Context) {
     }
 
     data class RecogDetailBean(val plate_number: String, val plate_color: String)
+
+    init {
+        bindLoginService(context)
+        if (login()) bindRecogService(context)
+    }
 }

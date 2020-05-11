@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 
-class CameraUtils(private val listener: DistinguishListener, private val previewView: CameraViewInterface, val fragment: ControlFragment)
+class CameraUtils(private val listener: OnCameraBytesListener, private val previewView: CameraViewInterface, val fragment: ControlFragment)
     : UVCCameraHelper.OnMyDevConnectListener, AbstractUVCCameraHandler.OnPreViewResultListener {
     private val tag = "CameraUtils"
     private val mCameraHelper = UVCCameraHelper.getInstance()
@@ -92,8 +92,9 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
 
     var mCanUp = false
     override fun onPreviewResult(p0: ByteArray?) {
-        if (isPriview) {
-            CarBrandManager.distinguishByte(p0, mPreviewWidth, mPreviewHeight, 0, ProbeCardListener { bitmap, has ->
+        if (isPriview && p0 != null) {
+            listener.cameraBytesListener(p0)
+            /*CarBrandManager.distinguishByte(p0, mPreviewWidth, mPreviewHeight, 0, ProbeCardListener { bitmap, has ->
                 Log.e("onPreviewFrame", "probeResult  bitmap >> " + bitmap.isRecycled)
                 Log.e("onPreviewFrame", "probeResult has >> $has")
                 if (has && mCanUp) {
@@ -113,7 +114,7 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
                         }
                     }
                 }
-            })
+            })*/
         }
     }
 
@@ -163,5 +164,9 @@ class CameraUtils(private val listener: DistinguishListener, private val preview
 
     override fun onDettachDev(p0: UsbDevice?) {
         Log.e(tag, "onDettachDev")
+    }
+
+    interface OnCameraBytesListener {
+        fun cameraBytesListener(byteArray: ByteArray)
     }
 }

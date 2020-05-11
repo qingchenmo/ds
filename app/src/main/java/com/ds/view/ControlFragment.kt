@@ -28,14 +28,14 @@ import com.ds.usrToos.Constant.SEND_LOCK_FALL_SUCCESS
 import com.ds.usrToos.Constant.SEND_LOCK_RISE_FEED_BACK
 import com.ds.usrToos.Constant.SEND_LOCK_RISE_SUCCESS
 import com.ds.usrToos.Constant.SEND_OPEN_LIGHT
+import com.ds.utils.CarRecogUtils
 import com.ds.utils.Constant
-import com.ds.utils.HttpsUtils
 import com.ds.utils.SharPUtils
 import com.serenegiant.usb.widget.UVCCameraTextureView
 import kotlinx.coroutines.*
 
 
-class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, ServerUtils.CheckUnLockListener {
+class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, ServerUtils.CheckUnLockListener, CameraUtils.OnCameraBytesListener {
 
 
     private val sTAG = "ControlFragment"
@@ -66,6 +66,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
     private var mCanRise = false
     private var mRiseDownJob: Job? = null
     private var mWatchDogTool = WatchDogTool()
+    private var mCarRecogUtils: CarRecogUtils? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.control_fragment, container, false)
@@ -95,6 +96,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
 
         initShiBieNum()
         mWatchDogTool.open()
+        mCarRecogUtils = CarRecogUtils(activity)
         return view
     }
 
@@ -131,7 +133,8 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.wb_open -> manager.jiaoZhun()
-            R.id.ds_up -> rise()
+            R.id.ds_up
+            -> rise()
             R.id.ds_down -> fall()
             R.id.camera_open -> openCamera()
             R.id.camera_close -> closeCamera()
@@ -230,6 +233,8 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         manager.release()
         lockManager.release()
         mWatchDogTool.release()
+        mCarRecogUtils?.unBindLoginService(activity)
+        mCarRecogUtils?.unBindRecogService(activity)
         super.onDestroy()
     }
 
@@ -375,5 +380,20 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         delay(3000)
         mCanRise = false
 
+    }
+
+    override fun cameraBytesListener(byteArray: ByteArray) {
+        val result = mCarRecogUtils?.getRecogResult(byteArray) ?: return
+        try {
+            val chepai = result.plate_number
+            val color = result.plate_color
+            MainScope().launch(Dispatchers.Main) {
+                Toast.makeText(activity, "检测到车牌 $chepai  颜色 $color", Toast.LENGTH_SHORT).show()
+                closeCamera()
+                if (lockManager.canFall()) serverUtils.parking(chepai, color)
+            }
+        } catch (e: Exception) {
+
+        }
     }
 }

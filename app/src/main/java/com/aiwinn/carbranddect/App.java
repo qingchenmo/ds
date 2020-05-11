@@ -5,13 +5,10 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 
 import com.aiwinn.adv.library.AdSdkManager;
 import com.aiwinn.adv.library.SettingManager;
-import com.aiwinn.carbranddect.utils.LogUtils;
 import com.ds.utils.MyUncaughtExceptionHandler;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
@@ -40,39 +37,9 @@ public class App extends Application {
         //设置该CrashHandler为程序的默认处理器
         OkGo.getInstance().init(this);
         initHttp();
-        authorizationInit(this);
+//        authorizationInit(this);
         context = this;
         sp = getSharedPreferences("CarBrand_SP", 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkStoragePermission()) {
-                Log.e("App", "有权限 初始化");
-                CarBrandManager.init(getApplicationContext(), 0, new InitListener() {
-                    @Override
-                    public void succ() {
-                        LogUtils.e("CarBrandManager init succ ");
-                    }
-
-                    @Override
-                    public void fail(int code, String msg) {
-                        LogUtils.e("CarBrandManager init fail code is " + code + "  msg is " + msg);
-                    }
-                });
-                isInit = true;
-            }
-        } else {
-            CarBrandManager.init(getApplicationContext(), 0, new InitListener() {
-                @Override
-                public void succ() {
-                    LogUtils.e("CarBrandManager init succ ");
-                }
-
-                @Override
-                public void fail(int code, String msg) {
-                    LogUtils.e("CarBrandManager init fail code is " + code + "  msg is " + msg);
-                }
-            });
-            isInit = true;
-        }
         Thread.setDefaultUncaughtExceptionHandler(new MyUncaughtExceptionHandler(this));
     }
 
@@ -117,6 +84,7 @@ public class App extends Application {
     public boolean checkStoragePermission() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 }
