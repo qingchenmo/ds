@@ -1,9 +1,14 @@
 package com.ds.usrToos
 
+import android.graphics.Bitmap
 import android_serialport_api.SerialPort
+import com.ds.utils.HttpsUtils
 import com.ds.utils.LightUtils
 import com.ds.view.ControlFragment
 import kotlinx.coroutines.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class UsrTool(private val fragment: ControlFragment) {
     private val mainScope = MainScope()
@@ -87,6 +92,25 @@ class UsrTool(private val fragment: ControlFragment) {
         }
     }
 
+    private fun writeLog(byteArray: ByteArray) {
+        try {
+            val dir = "/sdcard/aiwinn/ds/log"
+            val fileDir = File(dir)
+            if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
+            else if (fileDir.length() > 1024 * 1024 * 5) {
+                fileDir.delete()
+            }
+            val picPath = dir + "usrTool.txt"
+            val file = File(picPath)
+            val fos = FileOutputStream(file)
+            fos.write(byteArray)
+            fos.write("/n".toByteArray())
+            fos.flush()
+            fos.close()
+        } catch (e: Throwable) {
+        }
+    }
+
     private suspend fun parseReadBuffer(byteArray: ByteArray) {
         val newdis = String(byteArray)
         if (newdis.contains('m')) {
@@ -96,6 +120,7 @@ class UsrTool(private val fragment: ControlFragment) {
                 if (disArray.isNotEmpty()) {
                     jiaoYanSuccess = true
                     fragment.operateResult(Constant.DISTANCE_INFO, disArray[0].toDouble())
+                    writeLog(byteArray)
                 }
             } catch (e: Throwable) {
 
