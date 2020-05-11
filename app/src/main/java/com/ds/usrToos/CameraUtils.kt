@@ -134,7 +134,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
             else if (fileDir.length() > 1024 * 1024 * 20) {
                 fileDir.delete()
             }
-            val picPath = dir + System.currentTimeMillis() + "cameraPic.jpg"
+            val picPath = dir + File.separator + System.currentTimeMillis() + "cameraPic.jpg"
             val file = File(picPath)
             val fos = FileOutputStream(file)
             fos.write(baos.toByteArray())

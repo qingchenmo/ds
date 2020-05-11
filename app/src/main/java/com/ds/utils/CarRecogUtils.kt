@@ -42,7 +42,7 @@ class CarRecogUtils(context: Context) {
     }
 
     fun login(): Boolean {
-        val acResult = acBinder?.login("ESUXILHNU4YWKVW7")
+        val acResult = acBinder?.login("XAKO7MCQHMYWLNAV")
         Log.e(CarRecogUtils::class.java.name, "acResult == $acResult")
         when (acResult) {
             0 -> Toast.makeText(App.context, "恭喜,程序激活成功!", Toast.LENGTH_SHORT).show()
@@ -65,8 +65,11 @@ class CarRecogUtils(context: Context) {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             if (p1 is RecogService.MyBinder) recogBinder = p1
             iInitPlateIDSDK = recogBinder?.initPlateIDSDK
-            if (iInitPlateIDSDK != null && iInitPlateIDSDK != 0) {
+            if (iInitPlateIDSDK == null||iInitPlateIDSDK != 0) {
                 val str = arrayOf("" + iInitPlateIDSDK)
+                Toast.makeText(App.context,"识别服务开启 $iInitPlateIDSDK",Toast.LENGTH_SHORT).show()
+            }else{
+                Toast.makeText(App.context,"识别服务开启成功 $iInitPlateIDSDK",Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -85,6 +88,11 @@ class CarRecogUtils(context: Context) {
         prop.height = 1280
         prop.width = 720
         prop.picByte = byteArray
+        prop.plateIDCfg.left = 0
+        prop.plateIDCfg.top = 0
+        prop.plateIDCfg.bottom = 1280
+        prop.plateIDCfg.right = 720
+        prop.plateIDCfg.bRotate = 2
         val fieldvalue = recogBinder?.doRecogDetail(prop)
         return if (fieldvalue != null) {
             RecogDetailBean(fieldvalue[0], fieldvalue[1])
@@ -95,6 +103,5 @@ class CarRecogUtils(context: Context) {
 
     init {
         bindLoginService(context)
-        if (login()) bindRecogService(context)
     }
 }
