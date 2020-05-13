@@ -387,10 +387,11 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         try {
             val chepai = result.plate_number
             val color = result.plate_color
-            MainScope().launch(Dispatchers.Main) {
+            if (chepai.isNotEmpty()) MainScope().launch(Dispatchers.Main) {
                 Toast.makeText(activity, "检测到车牌 $chepai  颜色 $color", Toast.LENGTH_SHORT).show()
-//                closeCamera()
-//                if (lockManager.canFall()) serverUtils.parking(chepai, color)
+//                mPower?.text = chepai + "   " + color
+                closeCamera()
+                if (lockManager.canFall()) serverUtils.parking(chepai, color)
             }
         } catch (e: Exception) {
 

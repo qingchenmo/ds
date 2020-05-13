@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.BitmapFactory
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
@@ -14,8 +15,6 @@ import com.ice.iceplate.ActivateService
 import com.ice.iceplate.RecogService
 
 class CarRecogUtils(context: Context) {
-
-
     var acBinder: ActivateService.ActivateBinder? = null
     val acConnection = object : ServiceConnection {
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -24,10 +23,11 @@ class CarRecogUtils(context: Context) {
 
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             if (p1 is ActivateService.ActivateBinder) acBinder = p1
+            if (login()) bindRecogService(context)
         }
     }
 
-    fun bindLoginService(context: Context) {
+    private fun bindLoginService(context: Context) {
         try {
             val actiIntent = Intent(context, ActivateService::class.java)
             context.bindService(actiIntent, acConnection, Service.BIND_AUTO_CREATE)
@@ -65,11 +65,11 @@ class CarRecogUtils(context: Context) {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
             if (p1 is RecogService.MyBinder) recogBinder = p1
             iInitPlateIDSDK = recogBinder?.initPlateIDSDK
-            if (iInitPlateIDSDK == null||iInitPlateIDSDK != 0) {
+            if (iInitPlateIDSDK == null || iInitPlateIDSDK != 0) {
                 val str = arrayOf("" + iInitPlateIDSDK)
-                Toast.makeText(App.context,"识别服务开启 $iInitPlateIDSDK",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(App.context,"识别服务开启成功 $iInitPlateIDSDK",Toast.LENGTH_SHORT).show()
+                Toast.makeText(App.context, "识别服务开启 $iInitPlateIDSDK", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(App.context, "识别服务开启成功 $iInitPlateIDSDK", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -84,15 +84,16 @@ class CarRecogUtils(context: Context) {
     }
 
     fun getRecogResult(byteArray: ByteArray): RecogDetailBean? {
+        val bit = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         val prop = PlateRecognitionParameter()
-        prop.height = 1280
-        prop.width = 720
+        prop.height = 720
+        prop.width = 1280
         prop.picByte = byteArray
         prop.plateIDCfg.left = 0
         prop.plateIDCfg.top = 0
         prop.plateIDCfg.bottom = 1280
         prop.plateIDCfg.right = 720
-        prop.plateIDCfg.bRotate = 2
+        prop.plateIDCfg.bRotate = 0
         val fieldvalue = recogBinder?.doRecogDetail(prop)
         return if (fieldvalue != null) {
             RecogDetailBean(fieldvalue[0], fieldvalue[1])

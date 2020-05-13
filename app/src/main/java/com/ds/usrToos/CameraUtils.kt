@@ -2,6 +2,7 @@ package com.ds.usrToos
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.usb.UsbDevice
 import android.util.Log
 import com.aiwinn.carbranddect.CarBrandManager
@@ -9,6 +10,7 @@ import com.aiwinn.carbranddect.able.DistinguishListener
 import com.aiwinn.carbranddect.able.ProbeCardListener
 import com.ds.utils.HttpsUtils
 import com.ds.view.ControlFragment
+import com.ds.view.MainActivity
 import com.jiangdg.usbcamera.UVCCameraHelper
 import com.serenegiant.usb.common.AbstractUVCCameraHandler
 import com.serenegiant.usb.widget.CameraViewInterface
@@ -41,6 +43,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
     }
 
     fun isOpen() = isPriview
+
     @Synchronized
     suspend fun start(): Boolean {
         return try {

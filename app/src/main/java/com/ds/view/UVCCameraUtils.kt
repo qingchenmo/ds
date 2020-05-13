@@ -116,7 +116,7 @@ class UVCCameraUtils private constructor() {
         mCameraHelper = UVCCameraHelper.getInstance()
         mCameraHelper?.setDefaultPreviewSize(mPreviewWidth, mPreviewHeight)
         mPreviewView?.aspectRatio = (mPreviewWidth / mPreviewHeight.toFloat()).toDouble()
-        mCameraHelper?.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_MJPEG)
+        mCameraHelper?.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_YUYV)
         this.mListener = cameraListener
         mCameraHelper?.initUSBMonitor(mActivity, mPreviewView, listener)
         Toast.makeText(activity, "Camera init", Toast.LENGTH_SHORT).show()

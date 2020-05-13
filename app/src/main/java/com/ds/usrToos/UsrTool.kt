@@ -94,32 +94,35 @@ class UsrTool(private val fragment: ControlFragment) {
             }
         }
     }
-
-    private fun writeLog(byteArray: String) {
-        try {
-            val dir = "/sdcard/aiwinn/ds/log"
-            val fileDir = File(dir)
-            if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
-            else if (fileDir.length() > 1024 * 1024 * 5) {
-                fileDir.delete()
+    companion object{
+        fun writeLog(byteArray: String) {
+            try {
+                val dir = "/sdcard/aiwinn/ds/log"
+                val fileDir = File(dir)
+                if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
+                else if (fileDir.length() > 1024 * 1024 * 5) {
+                    fileDir.delete()
+                }
+                val picPath = dir + File.separator + "usrTool.txt"
+                val fos = FileWriter(picPath,true)
+                fos.write(getTime()+"           ")
+                fos.write(byteArray)
+                fos.write("\r\n")
+                fos.flush()
+                fos.close()
+            } catch (e: Throwable) {
             }
-            val picPath = dir + File.separator + "usrTool.txt"
-            val fos = FileWriter(picPath,true)
-            fos.write(getTime()+"           ")
-            fos.write(byteArray)
-            fos.write("\r\n")
-            fos.flush()
-            fos.close()
-        } catch (e: Throwable) {
+        }
+        private fun getTime():String{
+            val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+            val curDate = Date(System.currentTimeMillis())
+            val str = formatter.format(curDate)
+            return str
         }
     }
 
-    private fun getTime():String{
-        val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
-        val curDate = Date(System.currentTimeMillis())
-        val str = formatter.format(curDate)
-        return str
-    }
+
+
 
     private suspend fun parseReadBuffer(byteArray: ByteArray) {
         val newdis = String(byteArray)
