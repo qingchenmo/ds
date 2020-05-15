@@ -97,7 +97,7 @@ class UsrTool(private val fragment: ControlFragment) {
     companion object{
         fun writeLog(byteArray: String) {
             try {
-                val dir = "/sdcard/aiwinn/ds/log"
+                val dir = "/sdcard/ds/log"
                 val fileDir = File(dir)
                 if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
                 else if (fileDir.length() > 1024 * 1024 * 5) {

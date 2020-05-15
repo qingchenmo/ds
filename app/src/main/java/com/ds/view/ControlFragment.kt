@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -97,6 +98,13 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
         initShiBieNum()
         mWatchDogTool.open()
         mCarRecogUtils = CarRecogUtils(activity)
+        val commitView = view?.findViewById<TextView>(R.id.commit)
+
+        val et = view?.findViewById<EditText>(R.id.et)
+        commitView?.setOnClickListener {
+            Toast.makeText(activity, "修改激活码为：${et?.text.toString().trim()}", Toast.LENGTH_SHORT).show()
+            SharPUtils.saveData("recog", et?.text.toString().trim())
+        }
         return view
     }
 

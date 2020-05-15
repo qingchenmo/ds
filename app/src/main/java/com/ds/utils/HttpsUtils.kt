@@ -161,6 +161,7 @@ object HttpsUtils {
         OkGo.post<String>("$BASE_URL/upload/imageRecFailure")
                 .params("devSn", android.os.Build.SERIAL)
                 .params("file", file)
+                .isMultipart(true)
                 .execute(object : StringCallback() {
                     override fun onSuccess(response: Response<String>) {
                         Log.e(TAG, response.body())

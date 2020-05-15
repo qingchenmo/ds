@@ -42,7 +42,9 @@ class CarRecogUtils(context: Context) {
     }
 
     fun login(): Boolean {
-        val acResult = acBinder?.login("XAKO7MCQHMYWLNAV")
+        val recof = SharPUtils.getData("recog", "LVEZOUIDHAYWKMSR")
+        val acResult = acBinder?.login(recof)
+//        val acResult = acBinder?.login("XAKO7MCQHMYWLNAV")
         Log.e(CarRecogUtils::class.java.name, "acResult == $acResult")
         when (acResult) {
             0 -> Toast.makeText(App.context, "恭喜,程序激活成功!", Toast.LENGTH_SHORT).show()

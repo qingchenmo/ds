@@ -97,27 +97,11 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
     override fun onPreviewResult(p0: ByteArray?) {
         if (isPriview && p0 != null) {
             listener.cameraBytesListener(p0)
-            /*CarBrandManager.distinguishByte(p0, mPreviewWidth, mPreviewHeight, 0, ProbeCardListener { bitmap, has ->
-                Log.e("onPreviewFrame", "probeResult  bitmap >> " + bitmap.isRecycled)
-                Log.e("onPreviewFrame", "probeResult has >> $has")
-                if (has && mCanUp) {
-                    mCanUp = false
-                    CarBrandManager.distinguishBitmap(bitmap, listener)
-                    MainScope().async(Dispatchers.IO) {
-                        try {
-                            val bit = Bitmap.createBitmap(bitmap)
-                            val tempBitmap = bit.copy(Bitmap.Config.ARGB_8888, false)
-                            val dir = "/sdcard/aiwinn/ds/pic"
-                            val file = File(dir)
-                            if (!file.exists() || !file.isDirectory) file.mkdirs()
-                            val picPath = dir + "cameraPic.jpg"
-                            compressImage(tempBitmap)
-                        }catch (e:Throwable){
+            try {
+                compressImage(BitmapFactory.decodeByteArray(p0, 0, p0.size))
+            } catch (e: Throwable) {
 
-                        }
-                    }
-                }
-            })*/
+            }
         }
     }
 
@@ -131,7 +115,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
                 options -= 10
                 bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos)
             }
-            val dir = "/sdcard/aiwinn/ds/pic"
+            val dir = "/sdcard/ds/pic"
             val fileDir = File(dir)
             if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
             else if (fileDir.length() > 1024 * 1024 * 20) {
