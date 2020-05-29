@@ -354,11 +354,11 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                         mRiseDownJob?.cancel()
                         mCanRise = false
                         openCamera()
-                    } else if (dis in 0.05..0.9) {
+                    } else if (dis in 0.05..2.15) {
                         mHasThingView?.text = "有"
                         mRiseDownJob?.cancel()
                         mCanRise = false
-                    } else if ((dis < 0.05 || dis > 0.9) && timeout <= 0 && cameraUtils?.isOpen() == false && lockManager.canRise()) {
+                    } else if ((dis < 0.05 || dis > 2.15) && timeout <= 0 && cameraUtils?.isOpen() == false && lockManager.canRise()) {
                         if (mCanRise) {
                             rise()
                             mCanRise = false
