@@ -32,7 +32,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
             Log.e(tag, "init start")
             mCameraHelper.setDefaultPreviewSize(mPreviewWidth, mPreviewHeight)
             previewView.aspectRatio = (mPreviewWidth / mPreviewHeight.toFloat()).toDouble()
-            mCameraHelper.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_MJPEG)
+            mCameraHelper.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_YUYV)
             mCameraHelper.initUSBMonitor(activity, previewView, this)
             mCameraHelper.setOnPreviewFrameListener(this)
             mCameraHelper.registerUSB()
@@ -97,11 +97,11 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
     override fun onPreviewResult(p0: ByteArray?) {
         if (isPriview && p0 != null) {
             listener.cameraBytesListener(p0)
-            try {
+            /*try {
                 compressImage(BitmapFactory.decodeByteArray(p0, 0, p0.size))
             } catch (e: Throwable) {
 
-            }
+            }*/
         }
     }
 
