@@ -15,6 +15,12 @@ class WatchDogTool {
         mSerialPortJob = mainScope.launch(Dispatchers.IO) {
             serialPort = SerialPort("/dev/ttyMT2", 9600, 0)
             val openEd = serialPort?.open() ?: false
+            serialPort?.write(byteArrayOf(
+                    0xFA.toByte(),
+                    0x10,
+                    0x01,
+                    0x10
+            ))
             async { startWatch() }
         }
     }
