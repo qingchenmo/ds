@@ -188,6 +188,7 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
                 mCameraStatusView?.text = "关闭"
             }
             delay(5000)
+            cameraUtils?.compressImage()
             if (cameraUtils?.isOpen() == true) closeCamera()
         }
     }
@@ -274,6 +275,8 @@ class ControlFragment : Fragment(), DistinguishListener, View.OnClickListener, S
             fall()
             referShanieCount()
             closeCamera()
+        } else {
+            cameraUtils?.compressImage()
         }
     }
 

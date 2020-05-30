@@ -1,20 +1,17 @@
 package com.ds.usrToos
 
 import android.app.Activity
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.hardware.usb.UsbDevice
+import android.os.Environment
 import android.util.Log
-import com.aiwinn.carbranddect.CarBrandManager
-import com.aiwinn.carbranddect.able.DistinguishListener
-import com.aiwinn.carbranddect.able.ProbeCardListener
+import android.widget.Toast
 import com.ds.utils.HttpsUtils
 import com.ds.view.ControlFragment
-import com.ds.view.MainActivity
 import com.jiangdg.usbcamera.UVCCameraHelper
 import com.serenegiant.usb.common.AbstractUVCCameraHandler
 import com.serenegiant.usb.widget.CameraViewInterface
-import kotlinx.coroutines.*
+import kotlinx.coroutines.delay
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -32,7 +29,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
             Log.e(tag, "init start")
             mCameraHelper.setDefaultPreviewSize(mPreviewWidth, mPreviewHeight)
             previewView.aspectRatio = (mPreviewWidth / mPreviewHeight.toFloat()).toDouble()
-            mCameraHelper.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_YUYV)
+            mCameraHelper.setDefaultFrameFormat(UVCCameraHelper.FRAME_FORMAT_MJPEG)
             mCameraHelper.initUSBMonitor(activity, previewView, this)
             mCameraHelper.setOnPreviewFrameListener(this)
             mCameraHelper.registerUSB()
@@ -94,40 +91,50 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
     }
 
     var mCanUp = false
+    var mPhotoByte: ByteArray? = null
     override fun onPreviewResult(p0: ByteArray?) {
         if (isPriview && p0 != null) {
+            mPhotoByte = p0
             listener.cameraBytesListener(p0)
-            /*try {
-                compressImage(BitmapFactory.decodeByteArray(p0, 0, p0.size))
-            } catch (e: Throwable) {
-
-            }*/
         }
     }
 
-    private fun compressImage(bitmap: Bitmap) {
+    private fun yuv2Bitmap(yuv: ByteArray, width: Int, height: Int): Bitmap? {
+        var bitmap: Bitmap? = null
         try {
-            val baos = ByteArrayOutputStream()
-            var options = 100
-            bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos)
-            while (baos.toByteArray().size / 1024 > 100) {
-                baos.reset()
-                options -= 10
-                bitmap.compress(Bitmap.CompressFormat.JPEG, options, baos)
+            val bos = ByteArrayOutputStream(yuv.size)
+            val yuvImage = YuvImage(yuv, ImageFormat.NV21, width, height, null)
+            val success = yuvImage.compressToJpeg(Rect(0, 0, width, height), 100, bos)
+            if (success) {
+                val buffer = bos.toByteArray()
+                bitmap = BitmapFactory.decodeByteArray(buffer, 0, buffer.size)
             }
-            val dir = "/sdcard/ds/pic"
+            bos.flush()
+            bos.close()
+        } catch (e: Throwable) {
+
+        }
+        return bitmap;
+    }
+
+    fun compressImage() {
+        if (mPhotoByte == null) return
+        val bitmap = yuv2Bitmap(mPhotoByte!!, mPreviewWidth, mPreviewHeight)
+        mPhotoByte = null
+        try {
+            Toast.makeText(fragment.activity, "bitmap == ", Toast.LENGTH_SHORT).show()
+            val dir = Environment.getExternalStorageDirectory().absolutePath + "/ds/pic"
             val fileDir = File(dir)
             if (!fileDir.exists() || !fileDir.isDirectory) fileDir.mkdirs()
-            else if (fileDir.length() > 1024 * 1024 * 20) {
-                fileDir.delete()
-            }
-            val picPath = dir + File.separator + System.currentTimeMillis() + "cameraPic.jpg"
+            val picPath = dir + File.separator + "cameraPic.jpg"
             val file = File(picPath)
             val fos = FileOutputStream(file)
-            fos.write(baos.toByteArray())
-            fos.flush()
-            fos.close()
-            bitmap.recycle()
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            if (bitmap != null && !bitmap.isRecycled) {
+                bitmap.recycle();
+            }
+            fos.flush();
+            fos.close();
             HttpsUtils.imageRecFailure(file)
         } catch (e: Throwable) {
         }
