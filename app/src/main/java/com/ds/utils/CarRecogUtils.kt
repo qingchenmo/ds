@@ -86,15 +86,14 @@ class CarRecogUtils(context: Context) {
     }
 
     fun getRecogResult(byteArray: ByteArray): RecogDetailBean? {
-        val bit = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
         val prop = PlateRecognitionParameter()
         prop.height = 720
         prop.width = 1280
         prop.picByte = byteArray
         prop.plateIDCfg.left = 0
         prop.plateIDCfg.top = 0
-        prop.plateIDCfg.bottom = 1280
-        prop.plateIDCfg.right = 720
+        prop.plateIDCfg.bottom = 720
+        prop.plateIDCfg.right = 1280
         prop.plateIDCfg.bRotate = 0
         val fieldvalue = recogBinder?.doRecogDetail(prop)
         return if (fieldvalue != null) {
