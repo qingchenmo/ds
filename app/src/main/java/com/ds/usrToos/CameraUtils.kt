@@ -117,8 +117,11 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
         return bitmap;
     }
 
+    /**
+     * 上传图片
+     */
     fun compressImage() {
-        if (mPhotoByte == null) return
+        /*if (mPhotoByte == null) return
         val bitmap = yuv2Bitmap(mPhotoByte!!, mPreviewWidth, mPreviewHeight)
         mPhotoByte = null
         try {
@@ -137,7 +140,7 @@ class CameraUtils(private val listener: OnCameraBytesListener, private val previ
             fos.close();
             HttpsUtils.imageRecFailure(file)
         } catch (e: Throwable) {
-        }
+        }*/
     }
 
     override fun onDisConnectDev(p0: UsbDevice?) {
